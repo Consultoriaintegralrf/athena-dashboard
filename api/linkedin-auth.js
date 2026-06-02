@@ -56,7 +56,7 @@ export default async function handler(req, res) {
     `?response_type=code` +
     `&client_id=${CLIENT_ID}` +
     `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&scope=openid%20profile%20email%20w_member_social%20r_organization_social`;
+    `&scope=openid%20profile%20email%20w_member_social`;
 
   res.redirect(302, authUrl);
 }
