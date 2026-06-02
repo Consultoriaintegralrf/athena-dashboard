@@ -604,19 +604,19 @@ function renderStrategy() {
 function renderPostsTable() {
   const posts = filterPosts();
   document.getElementById('postCount').textContent = `${posts.length} posts`;
+  const stratIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
   document.getElementById('postsTbody').innerHTML = posts.slice(0, 30).map(p => `
-    const stratIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
-    return \`    <tr>
-      <td title="\${p.titulo||''}">\${(p.titulo||'').slice(0,50)}\${(p.titulo||'').length>50?'…':''}</td>
-      <td>\${badge(p.plataforma)}</td>
-      <td>\${p.pilar||'—'}</td>
-      <td>\${(p.estrategias||[]).map(s=>stratIcons[s]||'').join('') || '<span class="metric-null">—</span>'}</td>
-      <td>\${p.formato||'—'}</td>
-      <td style="white-space:nowrap">\${p.fecha||'—'}</td>
-      <td style="white-space:nowrap;color:var(--text3);">\${p.horario||'—'}</td>
-      <td>\${p.likes != null ? p.likes : '<span class="metric-null">—</span>'}</td>
-      <td>\${p.comentarios != null ? p.comentarios : '<span class="metric-null">—</span>'}</td>
-    </tr>\`;
+    <tr>
+      <td title="${p.titulo||''}">${(p.titulo||'').slice(0,50)}${(p.titulo||'').length>50?'…':''}</td>
+      <td>${badge(p.plataforma)}</td>
+      <td>${p.pilar||'—'}</td>
+      <td>${(p.estrategias||[]).map(s=>stratIcons[s]||'').join('') || '<span class="metric-null">—</span>'}</td>
+      <td>${p.formato||'—'}</td>
+      <td style="white-space:nowrap">${p.fecha||'—'}</td>
+      <td style="white-space:nowrap;color:var(--text3);">${p.horario||'—'}</td>
+      <td>${p.likes != null ? p.likes : '<span class="metric-null">—</span>'}</td>
+      <td>${p.comentarios != null ? p.comentarios : '<span class="metric-null">—</span>'}</td>
+    </tr>
   `).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:32px;">No hay posts en este período</td></tr>';
 }
 
