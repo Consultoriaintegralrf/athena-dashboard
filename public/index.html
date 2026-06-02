@@ -7,6 +7,9 @@
   <meta name="description" content="Dashboard de analítica de redes sociales — RF Consultoría Integral">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%230d9488'/><stop offset='100%' stop-color='%230f172a'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><text x='50' y='68' text-anchor='middle' font-size='46' font-weight='900' font-family='sans-serif' fill='white'>RF</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Geist font via CDN (anti-slop typography) -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/npm/geist-font@1.1.0/css/stylesheet.min.css" rel="stylesheet">
   <style>
     :root {
       /* Primitives — Financial Dashboard + Productivity Tool palette */
@@ -42,14 +45,15 @@
       /* Radii */
       --radius-sm: 6px; --radius: 8px; --radius-lg: 12px; --radius-xl: 16px;
       
-      /* Shadows */
-      --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
-      --shadow: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
-      --shadow-lg: 0 4px 6px rgba(0,0,0,.3), 0 2px 4px rgba(0,0,0,.2);
-      --shadow-xl: 0 10px 15px rgba(0,0,0,.4), 0 4px 6px rgba(0,0,0,.2);
+      /* Shadows — Anti-slop: tinted shadows matching bg hue, not pure black */
+      --shadow-sm: 0 1px 2px rgba(15,23,42,.6);
+      --shadow: 0 1px 3px rgba(15,23,42,.6), 0 1px 2px rgba(15,23,42,.4);
+      --shadow-lg: 0 4px 6px rgba(15,23,42,.6), 0 2px 4px rgba(15,23,42,.4);
+      --shadow-xl: 0 10px 15px rgba(15,23,42,.7), 0 4px 6px rgba(15,23,42,.4);
       
-      /* Typography */
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      /* Typography — Design Read: analytics dashboard · professional · Financial Dashboard palette · Geist · restrained motion */
+      --font-sans: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'Geist Mono', 'JetBrains Mono', 'Fira Code', monospace;
       --text-xs: 0.75rem; --text-sm: 0.8125rem; --text-base: 0.875rem; --text-lg: 1rem; --text-xl: 1.125rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem; --text-4xl: 2.25rem;
       --font-normal: 400; --font-medium: 500; --font-semibold: 600; --font-bold: 700; --font-extrabold: 800;
       
@@ -59,6 +63,9 @@
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text-secondary); min-height: 100vh; line-height: 1.6; -webkit-font-smoothing: antialiased; font-size: var(--text-base); }
+    /* Anti-slop: tabular-nums for data dashboards + text-wrap balance for headings */
+    .kpi-value, td, .bar-val, .strat-value { font-variant-numeric: tabular-nums; }
+    h1, h2, h3 { text-wrap: balance; }
     
     /* Accessibility */
     .skip-link { position: absolute; top: -100px; left: var(--space-4); background: var(--color-accent); color: #fff; padding: var(--space-2) var(--space-4); border-radius: var(--radius); z-index: 100; font-weight: var(--font-semibold); font-size: var(--text-sm); text-decoration: none; transition: top var(--transition); }
@@ -99,7 +106,7 @@
     
     /* ── TOPBAR ── */
     .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 36px; flex-wrap: wrap; gap: var(--space-4); }
-    .topbar h1 { font-size: var(--text-3xl); font-weight: var(--font-extrabold); color: var(--color-text); letter-spacing: -0.5px; }
+    .topbar h1 { font-size: var(--text-3xl); font-weight: var(--font-extrabold); color: var(--color-text); letter-spacing: -0.03em; }
     .topbar .subtitle { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-1); }
     .topbar .subtitle strong { color: var(--color-accent-light); font-weight: var(--font-semibold); }
     .topbar-actions { display: flex; gap: var(--space-2); align-items: center; }
@@ -205,6 +212,13 @@
     .loading-state { text-align:center; padding:var(--space-10); display:flex; flex-direction:column; align-items:center; gap:var(--space-4); color:var(--color-text-muted); font-size:var(--text-sm); }
     .spinner { width:36px; height:36px; border:2.5px solid var(--color-border); border-top-color: var(--color-accent); border-radius:50%; animation:spin .7s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg)} }
+    /* ── SKELETON LOADER (Taste anti-slop: skeleton > spinner for dashboards) ── */
+    .skeleton { background: linear-gradient(90deg, var(--color-surface-raised) 25%, var(--color-surface-overlay) 50%, var(--color-surface-raised) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-card { height: 120px; border-radius: var(--radius-lg); }
+    .skeleton-text { height: 14px; margin-bottom: var(--space-2); width: 70%; }
+    .skeleton-text.short { width: 40%; }
+    
     .error-state { background: #1a0808; border:1px solid #4a1a1a; border-radius:var(--radius); padding:var(--space-4); color:#fca5a5; font-size:var(--text-sm); margin-bottom:var(--space-4); }
     .empty-state { text-align:center; padding:var(--space-8); color:var(--color-text-dim); font-size:var(--text-sm); }
 
@@ -282,7 +296,13 @@
     </div>
 
     <div id="errorBox" class="error-state" style="display:none;" role="alert"></div>
-    <div id="loadingBox" class="loading-state"><div class="spinner"></div>Conectando con Baserow...</div>
+    <div id="loadingBox" class="loading-state" style="display:flex;">
+      <div class="spinner"></div>
+      <span>Conectando con Baserow...</span>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);width:100%;margin-top:var(--space-4);">
+        <div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>
+      </div>
+    </div>
 
     <div class="view active" id="view-overview">
       <div class="kpi-grid" id="kpiGrid"></div>
