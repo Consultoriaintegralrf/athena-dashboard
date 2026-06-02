@@ -133,7 +133,7 @@
         <span class="icon">📊</span> <span>Overview</span>
       </a>
       <a href="#" data-view="trends" onclick="switchView('trends')">
-        <span class="icon">📈</span> <span>Tendencias</span>
+        <span class="icon">🎯</span> <span>Estrategia</span>
       </a>
       <a href="#" data-view="posts" onclick="switchView('posts')">
         <span class="icon">📋</span> <span>Posts</span>
@@ -186,14 +186,28 @@
       </div>
     </div>
 
-    <!-- View: Trends -->
+    <!-- View: Estrategia -->
     <div class="view" id="view-trends">
-      <div class="charts-row full">
-        <div class="chart-panel"><h3>Publicaciones por Semana</h3><canvas id="chartWeekly"></canvas></div>
+      <div class="charts-row">
+        <div class="chart-panel">
+          <h3>🎯 Balance de Pilares vs Target</h3>
+          <div id="pilarBars" style="display:flex;flex-direction:column;gap:10px;padding:8px 0;"></div>
+        </div>
+        <div class="chart-panel">
+          <h3>⚠️ Gaps Estratégicos</h3>
+          <div id="strategicGaps" style="display:flex;flex-direction:column;gap:10px;padding:8px 0;"></div>
+        </div>
       </div>
       <div class="charts-row">
-        <div class="chart-panel"><h3>Engagement por Formato</h3><canvas id="chartFormat"></canvas></div>
-        <div class="chart-panel"><h3>Distribución de Objetivos</h3><canvas id="chartObjetivo"></canvas></div>
+        <div class="chart-panel" style="grid-column:1/-1;">
+          <h3>📅 Próximos 7 Días</h3>
+          <div id="nextWeek" style="overflow-x:auto;">
+            <table style="width:100%;">
+              <thead><tr id="nextWeekHeader"></tr></thead>
+              <tbody id="nextWeekBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -276,7 +290,7 @@ function filterPosts() {
 function renderAll() {
   renderKPIs();
   renderOverviewCharts();
-  renderTrendsCharts();
+  renderStrategy();
   renderPostsTable();
   renderRecommendations();
 }
@@ -369,98 +383,126 @@ function renderOverviewCharts() {
   }
 }
 
-function renderTrendsCharts() {
-  const posts = STATE.data?.recentPosts || [];
-  if (!posts.length) return;
+function renderStrategy() {
+  const data = STATE.data;
+  if (!data) return;
+  const pc = data.pilarCounts || {};
+  const platC = data.platformCounts || {};
+  const total = Object.values(pc).reduce((a,b)=>a+b,0) || 1;
 
-  // Weekly posting
-  destroyChart('weekly');
-  const weekMap = {};
-  posts.forEach(p => {
-    if (!p.fecha) return;
-    const d = new Date(p.fecha + 'T12:00:00');
-    const mon = d.toLocaleDateString('es-MX', { month:'short', day:'numeric' });
-    const key = `${mon}`;
-    weekMap[key] = (weekMap[key] || 0) + 1;
+  // Target distribution
+  const targets = {
+    'Automatización': 27, 'Soporte Técnico': 27, 'IA': 18,
+    'Capacitación': 18, 'Transformación Digital': 10
+  };
+
+  // Pilar Balance Bars
+  const colors = { 'Automatización':'#3b82f6', 'Soporte Técnico':'#f59e0b', 'IA':'#a78bfa', 'Capacitación':'#34d399', 'Transformación Digital':'#f472b6' };
+  let barsHtml = '';
+  const gaps = [];
+  
+  Object.entries(targets).forEach(([pilar, targetPct]) => {
+    const actual = pc[pilar] || 0;
+    const actualPct = ((actual/total)*100);
+    const diff = actualPct - targetPct;
+    const status = diff < -3 ? '🔴' : diff < 0 ? '🟡' : '🟢';
+    const barColor = colors[pilar] || '#64748b';
+    
+    if (diff < -2) gaps.push({ pilar, actual, targetPct, actualPct: actualPct.toFixed(1), diff: diff.toFixed(1) });
+    
+    barsHtml += `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="width:180px;font-size:12px;color:var(--text2);text-align:right;">${pilar}</span>
+        <div style="flex:1;background:#1e2d4a;border-radius:6px;height:20px;position:relative;overflow:hidden;">
+          <div style="height:100%;background:${barColor};width:${Math.min(actualPct,100)}%;border-radius:6px;transition:width .5s;"></div>
+          <div style="position:absolute;top:0;bottom:0;left:${targetPct}%;width:2px;background:#fff;opacity:.5;" title="Target: ${targetPct}%"></div>
+        </div>
+        <span style="font-size:12px;width:70px;color:var(--text2);">${actualPct.toFixed(0)}%</span>
+        <span style="font-size:11px;width:45px;">${status} ${diff>0?'+':''}${diff.toFixed(0)}%</span>
+      </div>`;
   });
-  const wkKeys = Object.keys(weekMap).slice(-8);
-  const wkVals = wkKeys.map(k => weekMap[k]);
-  const ctx1 = document.getElementById('chartWeekly');
-  if (ctx1) {
-    STATE.charts.weekly = new Chart(ctx1, {
-      type: 'line',
-      data: {
-        labels: wkKeys,
-        datasets: [{
-          label: 'Posts', data: wkVals,
-          borderColor: '#2dd4bf', backgroundColor: '#2dd4bf22',
-          fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { labels: { color: '#94a3b8' } } },
-        scales: {
-          y: { beginAtZero: true, ticks: { color: '#64748b', stepSize: 1 }, grid: { color: '#1e2d4a' } },
-          x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
-        }
-      }
-    });
-  }
+  document.getElementById('pilarBars').innerHTML = barsHtml;
 
-  // Format distribution
-  destroyChart('format');
-  const fmtMap = {};
-  posts.forEach(p => { const f = p.formato || 'Sin formato'; fmtMap[f] = (fmtMap[f]||0)+1; });
-  const ctx2 = document.getElementById('chartFormat');
-  if (ctx2) {
-    STATE.charts.format = new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: Object.keys(fmtMap),
-        datasets: [{
-          data: Object.values(fmtMap),
-          backgroundColor: ['#2dd4bf66','#818cf866'],
-          borderColor: ['#2dd4bf','#818cf8'],
-          borderWidth: 1.5, borderRadius: 6
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { beginAtZero: true, ticks: { color: '#64748b', stepSize:1 }, grid: { color: '#1e2d4a' } },
-          y: { ticks: { color: '#94a3b8' }, grid: { display: false } }
-        }
-      }
+  // Strategic Gaps
+  let gapsHtml = '';
+  if (gaps.length === 0) {
+    gapsHtml = '<p style="color:var(--green);font-size:13px;">✅ Todos los pilares están dentro del rango objetivo. ¡Buen balance!</p>';
+  } else {
+    gaps.forEach(g => {
+      const needed = Math.ceil((g.targetPct * total / 100) - g.actual);
+      gapsHtml += `
+        <div style="background:#1a0f0f;border:1px solid #3b1111;border-radius:8px;padding:12px;">
+          <span style="font-weight:700;font-size:13px;">🔴 ${g.pilar}</span>
+          <span style="font-size:12px;color:var(--text2);margin-left:8px;">${g.actualPct}% actual vs ${g.targetPct}% objetivo (${g.diff}%)</span>
+          <div style="font-size:12px;color:var(--teal-light);margin-top:4px;">→ Crear <b>${needed} post${needed!==1?'s':''}</b> de ${g.pilar}</div>
+        </div>`;
     });
   }
+  
+  // Platform distribution insight
+  const igPct = ((platC.Instagram||0)/total*100).toFixed(0);
+  const fbPct = ((platC.Facebook||0)/total*100).toFixed(0);
+  const liPct = ((platC.LinkedIn||0)/total*100).toFixed(0);
+  
+  gapsHtml += `
+    <div style="background:#0a1a2b;border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <span style="font-weight:700;font-size:13px;color:var(--teal-light);">📱 Distribución de Plataformas</span>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px;">
+        Instagram ${igPct}% · Facebook ${fbPct}% · LinkedIn ${liPct}%
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">
+        ${parseInt(liPct) < 25 ? '→ LinkedIn bajo. Priorizar contenido ejecutivo.' : ''}
+        ${parseInt(fbPct) < 20 ? '→ Facebook bajo. Reforzar posts conversacionales.' : ''}
+        ${parseInt(igPct) > 40 ? '→ Instagram alto. Redistribuir 1 post a otra plataforma.' : ''}
+      </div>
+    </div>`;
+  
+  document.getElementById('strategicGaps').innerHTML = gapsHtml;
 
-  // Objective distribution
-  destroyChart('objetivo');
-  const objMap = {};
-  posts.forEach(p => { const o = p.objetivo || 'Sin clasificar'; objMap[o] = (objMap[o]||0)+1; });
-  const ctx3 = document.getElementById('chartObjetivo');
-  if (ctx3) {
-    STATE.charts.objetivo = new Chart(ctx3, {
-      type: 'polarArea',
-      data: {
-        labels: Object.keys(objMap),
-        datasets: [{
-          data: Object.values(objMap),
-          backgroundColor: ['#2dd4bf44','#818cf844','#f472b644','#fbbf2444','#34d39944'],
-          borderColor: ['#2dd4bf','#818cf8','#f472b6','#fbbf24','#34d399'],
-          borderWidth: 1.5
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 10, font: { size: 10 } } } }
-      }
+  // Next 7 Days Calendar
+  const posts = data.recentPosts || [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const next7 = new Date(today); next7.setDate(next7.getDate()+7);
+  
+  const upcoming = posts.filter(p => {
+    if (!p.fecha) return false;
+    const d = new Date(p.fecha + 'T12:00:00');
+    return d >= today && d <= next7;
+  }).sort((a,b) => (a.fecha||'').localeCompare(b.fecha||''));
+  
+  // Generate days
+  const days = [];
+  for (let i=0; i<7; i++) {
+    const d = new Date(today); d.setDate(d.getDate()+i);
+    const dateStr = d.toISOString().slice(0,10);
+    const dayPosts = upcoming.filter(p => p.fecha === dateStr);
+    const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    days.push({
+      label: `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`,
+      date: dateStr,
+      posts: dayPosts
     });
   }
-}
+  
+  document.getElementById('nextWeekHeader').innerHTML = days.map(d => 
+    `<th style="text-align:center;">${d.label}</th>`
+  ).join('');
+  
+  document.getElementById('nextWeekBody').innerHTML = `
+    <tr>
+      ${days.map(d => {
+        if (d.posts.length === 0) return `<td style="text-align:center;color:var(--text3);padding:20px 8px;">—</td>`;
+        return `<td style="padding:8px;vertical-align:top;">
+          ${d.posts.map(p => `
+            <div style="background:var(--surface2);border-radius:6px;padding:8px;margin-bottom:4px;font-size:11px;">
+              <div style="margin-bottom:3px;">${badge(p.plataforma)}</div>
+              <div style="color:var(--text2);">${(p.titulo||'').slice(0,40)}${(p.titulo||'').length>40?'…':''}</div>
+              <div style="color:var(--text3);margin-top:2px;">${p.pilar} · ${p.horario||''}</div>
+            </div>
+          `).join('')}
+        </td>`;
+      }).join('')}
+    </tr>`;
 
 function renderPostsTable() {
   const posts = filterPosts();
