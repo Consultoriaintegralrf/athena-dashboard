@@ -8,8 +8,8 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%230d9488'/><stop offset='100%' stop-color='%230f172a'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><text x='50' y='68' text-anchor='middle' font-size='46' font-weight='900' font-family='sans-serif' fill='white'>RF</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <!-- Geist font via CDN (anti-slop typography) -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link href="https://cdn.jsdelivr.net/npm/geist-font@1.1.0/css/stylesheet.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       /* Primitives — Financial Dashboard + Productivity Tool palette */
@@ -52,8 +52,8 @@
       --shadow-xl: 0 10px 15px rgba(15,23,42,.7), 0 4px 6px rgba(15,23,42,.4);
       
       /* Typography — Design Read: analytics dashboard · professional · Financial Dashboard palette · Geist · restrained motion */
-      --font-sans: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      --font-mono: 'Geist Mono', 'JetBrains Mono', 'Fira Code', monospace;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
       --text-xs: 0.75rem; --text-sm: 0.8125rem; --text-base: 0.875rem; --text-lg: 1rem; --text-xl: 1.125rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem; --text-4xl: 2.25rem;
       --font-normal: 400; --font-medium: 500; --font-semibold: 600; --font-bold: 700; --font-extrabold: 800;
       
@@ -342,7 +342,7 @@ const stratIcons={'9a':'📖','9b':'💰','9c':'🎯','9d':'🎬','9e':'🤖','9
 const stratNames={'9a':'Viaje del Héroe','9b':'Contraste Precios','9c':'CTA 1-Palabra','9d':'Tutorial Visual','9e':'Multiagente','9f':'CTAs Densos'};
 
 function badge(p){const m={Instagram:'badge-ig',Facebook:'badge-fb',LinkedIn:'badge-li'};return `<span class="badge ${m[p]||''}">${p}</span>`;}
-function sV(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.sidebar nav a').forEach(a=>{a.classList.remove('active');a.removeAttribute('aria-current')});document.getElementById('view-'+n).classList.add('active');const lnk=document.querySelector(`[data-view="${n}"]`);lnk.classList.add('active');lnk.setAttribute('aria-current','page');if(STATE.data)renderAll();}
+function sV(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.sidebar nav a').forEach(a=>{a.classList.remove('active');a.removeAttribute('aria-current')});document.getElementById('view-'+n).classList.add('active');const lnk=document.querySelector(`[data-view="${n}"]`);lnk.classList.add('active');lnk.setAttribute('aria-current','page');if(STATE.data&&n==='trends'){rStrategy();}else if(STATE.data&&n==='overview'){dC('strategies');dC('strategyEvo');}}
 function dC(k){if(STATE.charts[k]){STATE.charts[k].destroy();STATE.charts[k]=null;}}
 
 async function loadData(){
@@ -406,7 +406,7 @@ function rStrategy(){
 
   dC('strategyEvo');const sw=d.strategyByWeek||{},ws=Object.keys(sw).sort().slice(-6);
   const ce=document.getElementById('chartStrategyEvo');
-  if(ce&&ws.length>0){const ds=Object.entries(stratNames).map(([k,n],i)=>({label:n,data:ws.map(w=>sw[w]?.[k]||0),borderColor:['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],backgroundColor:'transparent',tension:.3,borderWidth:2,pointRadius:3,pointHoverRadius:6}));STATE.charts.strategyEvo=new Chart(ce,{type:'line',data:{labels:ws,datasets:ds},options:{responsive:true,plugins:{legend:{labels:{color:'#cbd5e1',padding:8,font:{size:10},boxWidth:12,usePointStyle:true}},tooltip:{backgroundColor:'#1e293b',titleColor:'#f8fafc',bodyColor:'#cbd5e1',borderColor:'#334155',borderWidth:1}},scales:{y:{beginAtZero:true,ticks:{color:'#64748b',stepSize:1},grid:{color:'#1e293b'}},x:{ticks:{color:'#cbd5e1'},grid:{display:false}}}}})}
+  if(ce&&ws.length>0&&document.getElementById('view-trends').classList.contains('active')){const ds=Object.entries(stratNames).map(([k,n],i)=>({label:n,data:ws.map(w=>sw[w]?.[k]||0),borderColor:['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],backgroundColor:'transparent',tension:.3,borderWidth:2,pointRadius:3,pointHoverRadius:6}));var cOpts={responsive:true,plugins:{legend:{labels:{color:'#cbd5e1',padding:8,font:{size:10},boxWidth:12,usePointStyle:true}},tooltip:{backgroundColor:'#1e293b',titleColor:'#f8fafc',bodyColor:'#cbd5e1',borderColor:'#334155',borderWidth:1}},scales:{y:{beginAtZero:true,ticks:{color:'#64748b',stepSize:1},grid:{color:'#1e293b'}},x:{ticks:{color:'#cbd5e1'},grid:{display:false}}}};STATE.charts.strategyEvo=new Chart(ce,{type:'line',data:{labels:ws,datasets:ds},options:cOpts});}
 
   const posts=d.recentPosts||[],today=new Date();today.setHours(0,0,0,0);const n7=new Date(today);n7.setDate(n7.getDate()+7);
   const up=posts.filter(p=>{if(!p.fecha)return!1;const dd=new Date(p.fecha+'T12:00:00');return dd>=today&&dd<=n7;}).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
