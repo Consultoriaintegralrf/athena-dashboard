@@ -1,222 +1,221 @@
 <!DOCTYPE html>
-<html lang="es-MX">
+<html lang="es-MX" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Athena Analytics 🦉 | RF Consultoría Integral</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0f1e'/><text x='50' y='68' text-anchor='middle' font-size='48' font-weight='900' font-family='sans-serif' fill='%232dd4bf'>RF</text><circle cx='78' cy='28' r='12' fill='%232dd4bf' opacity='.3'/><circle cx='78' cy='28' r='4' fill='%232dd4bf'/></svg>">
+  <title>Athena Analytics | RF Consultoría Integral</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%232e95a8'/><stop offset='100%' stop-color='%231a4654'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><text x='50' y='68' text-anchor='middle' font-size='46' font-weight='900' font-family='sans-serif' fill='white'>RF</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #060b16;
-      --surface: #0d1525;
-      --surface2: #141f35;
-      --border: #1a2d4a;
-      --navy: #1e3a5f;
-      --navy-light: #264b7a;
-      --teal: #0d9488;
-      --teal-light: #2dd4bf;
-      --teal-glow: #2dd4bf22;
-      --text: #e8edf5;
-      --text2: #8899b4;
-      --text3: #556680;
-      --red: #ef4444;
-      --green: #22c55e;
-      --amber: #f59e0b;
+      --bg-primary: #060f19;
+      --bg-secondary: #091828;
+      --bg-card: #0a1e2e;
+      --bg-card-hover: #0d2538;
+      --bg-elevated: #0d1f30;
+      --border: #1a2842;
+      --border-light: #0f2942;
+      --accent: #2e95a8;
+      --accent-light: #3aadc2;
+      --accent-glow: rgba(46, 149, 168, 0.15);
+      --accent-soft: rgba(46, 149, 168, 0.08);
+      --text-primary: #ffffff;
+      --text-secondary: #c8d3e6;
+      --text-muted: #6b7d95;
+      --text-dim: #4a5a6e;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
       --ig: #e1306c;
       --fb: #1877f2;
       --li: #0a66c2;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-secondary); min-height: 100vh; line-height: 1.6; -webkit-font-smoothing: antialiased; }
     
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
     
-    /* Layout */
     .layout { display: flex; min-height: 100vh; }
     
-    /* Sidebar */
-    .sidebar { width: 250px; background: var(--surface); border-right: 1px solid var(--border); position: fixed; top:0; left:0; bottom:0; z-index:10; display:flex; flex-direction:column; }
+    /* ---- SIDEBAR ---- */
+    .sidebar { width: 256px; background: var(--bg-secondary); border-right: 1px solid var(--border); position: fixed; top:0; left:0; bottom:0; z-index:20; display:flex; flex-direction:column; }
     .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
-    .sidebar-brand .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .sidebar-brand .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--teal), var(--navy-light)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; color: #fff; }
-    .sidebar-brand .logo-text { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-    .sidebar-brand .logo-text span { color: var(--teal-light); }
-    .sidebar-brand .logo-sub { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
-    .sidebar nav { flex:1; padding: 8px 12px; }
-    .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; margin-bottom: 2px; transition: all .15s; position: relative; }
-    .sidebar nav a:hover { background: var(--surface2); color: var(--text); }
-    .sidebar nav a.active { background: linear-gradient(135deg, var(--teal), var(--navy)); color: #fff; box-shadow: 0 2px 12px var(--teal-glow); }
-    .sidebar nav a .icon { font-size: 16px; width: 22px; text-align: center; }
-    .sidebar nav a .badge-count { margin-left: auto; background: var(--surface2); color: var(--text2); font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 600; }
-    .sidebar nav a.active .badge-count { background: #ffffff22; color: #fff; }
+    .sidebar-brand .brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .sidebar-brand .brand-logo { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent), #1a6678); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 16px; letter-spacing: -0.5px; }
+    .sidebar-brand .brand-name { font-size: 19px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px; }
+    .sidebar-brand .brand-name span { color: var(--accent-light); }
+    .sidebar-brand .brand-tag { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+    .sidebar nav { flex:1; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+    .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: all .15s; }
+    .sidebar nav a:hover { background: var(--bg-card); color: var(--text-secondary); }
+    .sidebar nav a.active { background: var(--accent-soft); color: var(--accent-light); border: 1px solid var(--accent-glow); }
+    .sidebar nav a .icon { font-size: 15px; width: 20px; text-align: center; }
+    .sidebar nav a .count { margin-left: auto; background: var(--bg-card); color: var(--text-muted); font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 600; min-width: 24px; text-align: center; }
+    .sidebar nav a.active .count { background: var(--accent-glow); color: var(--accent-light); }
     .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-    .sidebar-footer .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); animation: pulse-dot 2s infinite; }
-    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .sidebar-footer .status-text { font-size: 11px; color: var(--text3); }
-    .sidebar-footer .status-text strong { color: var(--text2); }
+    .sidebar-footer .dot { width: 7px; height: 7px; background: var(--success); border-radius: 50%; box-shadow: 0 0 6px var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .sidebar-footer div { font-size: 11px; }
+    .sidebar-footer strong { color: var(--text-secondary); font-weight: 600; }
+    .sidebar-footer span { color: var(--text-dim); }
 
-    /* Main */
-    .main { margin-left: 250px; flex: 1; padding: 28px 36px; max-width: 1400px; }
+    /* ---- MAIN ---- */
+    .main { margin-left: 256px; flex: 1; padding: 32px 40px; max-width: 1440px; }
     
-    /* Topbar */
-    .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
-    .topbar-left h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
-    .topbar-left .breadcrumb { font-size: 12px; color: var(--text3); margin-top: 2px; }
+    /* ---- TOPBAR ---- */
+    .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 36px; flex-wrap: wrap; gap: 16px; }
+    .topbar h1 { font-size: 28px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; }
+    .topbar .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    .topbar .subtitle strong { color: var(--accent-light); font-weight: 600; }
     .topbar-actions { display: flex; gap: 8px; align-items: center; }
-    .btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all .15s; background: transparent; color: var(--text2); display: inline-flex; align-items: center; gap: 6px; }
-    .btn:hover { background: var(--surface2); color: var(--text); border-color: var(--text3); }
-    .btn-primary { background: var(--teal); color: #fff; border-color: var(--teal); }
-    .btn-primary:hover { background: #0f766e; border-color: #0f766e; }
-    .select-filter { padding: 8px 12px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 12px; cursor: pointer; font-weight: 500; }
-    .select-filter:focus { outline: none; border-color: var(--teal); }
+    .btn { padding: 9px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all .15s; background: var(--bg-card); color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px; }
+    .btn:hover { background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border-light); }
+    .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-accent:hover { background: #268596; }
+    .select-filter { padding: 9px 12px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); font-size: 12px; cursor: pointer; font-weight: 500; }
+    .select-filter:focus { outline: none; border-color: var(--accent); }
 
-    /* KPI Grid */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 28px; }
-    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; position: relative; overflow: hidden; transition: transform .15s, box-shadow .15s; }
-    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
-    .kpi-card::before { content: ''; position: absolute; top:0; left:0; right:0; height: 3px; }
-    .kpi-card.ig::before { background: var(--ig); }
-    .kpi-card.fb::before { background: var(--fb); }
-    .kpi-card.li::before { background: var(--li); }
-    .kpi-card.total::before { background: linear-gradient(90deg, var(--teal-light), var(--ig), var(--fb), var(--li)); }
-    .kpi-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 10px; }
-    .kpi-value { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; }
-    .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+    /* ---- KPI CARDS ---- */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+    .kpi-card { background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary)); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; position: relative; overflow: hidden; transition: all .2s; }
+    .kpi-card:hover { border-color: var(--border-light); transform: translateY(-1px); }
+    .kpi-card .kpi-icon { font-size: 24px; margin-bottom: 12px; }
+    .kpi-card .kpi-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 6px; }
+    .kpi-card .kpi-value { font-size: 40px; font-weight: 800; color: var(--text-primary); letter-spacing: -1.5px; line-height: 1; }
+    .kpi-card .kpi-sub { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
+    .kpi-card::after { content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px; border-radius: 0 0 0 80px; opacity: .03; }
+    .kpi-card.ig::after { background: var(--ig); }
+    .kpi-card.fb::after { background: var(--fb); }
+    .kpi-card.li::after { background: var(--li); }
+    .kpi-card.total::after { background: var(--accent); }
 
-    /* Charts */
+    /* ---- PANELS ---- */
     .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-    .chart-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
-    .chart-panel h3 { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; font-weight: 700; }
-    .chart-panel canvas { max-height: 280px; }
+    .panel { background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary)); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .panel h3 { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .panel h3::before { content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
+    .panel canvas { max-height: 280px; }
 
-    /* Pilar bars */
-    .pilar-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .pilar-bar .pilar-name { width: 170px; font-size: 12px; color: var(--text2); text-align: right; }
-    .pilar-bar .bar-track { flex:1; background: var(--bg); border-radius: 6px; height: 22px; position: relative; overflow: hidden; }
-    .pilar-bar .bar-fill { height: 100%; border-radius: 6px; transition: width .6s ease; }
-    .pilar-bar .bar-target { position: absolute; top:0; bottom:0; width: 2px; background: #fff; opacity: .4; }
-    .pilar-bar .bar-pct { font-size: 12px; width: 42px; text-align: right; }
-    .pilar-bar .bar-diff { font-size: 11px; width: 55px; }
+    /* ---- PILAR BARS ---- */
+    .pilar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .pilar-row .pilar-name { width: 160px; font-size: 12px; color: var(--text-muted); text-align: right; font-weight: 500; }
+    .pilar-row .bar-track { flex:1; background: var(--bg-primary); border-radius: 6px; height: 24px; position: relative; overflow: hidden; border: 1px solid var(--border); }
+    .pilar-row .bar-fill { height: 100%; border-radius: 5px; transition: width .6s ease; opacity: .8; }
+    .pilar-row .bar-marker { position: absolute; top:0; bottom:0; width: 2px; background: var(--accent); opacity: .5; }
+    .pilar-row .bar-val { font-size: 12px; font-weight: 600; width: 40px; text-align: right; color: var(--text-secondary); }
+    .pilar-row .bar-diff { font-size: 11px; width: 60px; font-weight: 500; }
 
-    /* Table */
-    .table-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
-    .table-panel-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .table-panel-header h3 { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+    /* ---- TABLE ---- */
+    .table-panel { background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary)); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+    .table-panel-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .table-panel-header h3 { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text3); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .8px; white-space: nowrap; }
-    td { padding: 10px 14px; border-bottom: 1px solid #060b16; }
-    tr:hover td { background: #0a0f1e; }
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: .3px; }
+    th { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .8px; white-space: nowrap; }
+    td { padding: 10px 16px; border-bottom: 1px solid var(--bg-primary); }
+    tr:hover td { background: var(--bg-elevated); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: .3px; }
     .badge-ig { background: #e1306c18; color: #f472b6; }
     .badge-fb { background: #1877f218; color: #60a5fa; }
     .badge-li { background: #0a66c218; color: #38bdf8; }
-    .metric-null { color: var(--text3); font-style: italic; opacity: .6; }
+    .text-dim { color: var(--text-dim); font-style: italic; opacity: .6; }
 
-    /* Recommendation */
-    .reco-panel { background: linear-gradient(135deg, #0a1a30, #060f1e); border: 1px solid #1a3a5a; border-radius: 14px; padding: 24px; margin-bottom: 24px; }
-    .reco-panel h3 { color: var(--teal-light); font-size: 14px; margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .reco-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
-    .reco-item { background: #080f1c; border: 1px solid #162540; border-radius: 10px; padding: 16px; transition: border-color .15s; }
-    .reco-item:hover { border-color: var(--teal); }
-    .reco-item .reco-title { font-size: 12px; font-weight: 700; color: var(--teal-light); margin-bottom: 6px; }
-    .reco-item .reco-body { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    /* ---- STRATEGY CARDS ---- */
+    .strat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+    .strat-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+    .strat-card .strat-icon { font-size: 22px; margin-bottom: 6px; }
+    .strat-card .strat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .strat-card .strat-count { font-size: 22px; font-weight: 800; color: var(--text-primary); margin: 4px 0; }
+    .strat-card .strat-pct { font-size: 10px; color: var(--text-dim); }
+    .strat-card.highlight { border-color: var(--accent); background: var(--accent-soft); }
 
-    /* Gap items */
-    .gap-item { background: #180a0a; border: 1px solid #3b1111; border-radius: 10px; padding: 14px; margin-bottom: 8px; }
-    .gap-item .gap-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
-    .gap-item .gap-desc { font-size: 12px; color: var(--text2); }
-    .gap-item .gap-action { font-size: 11px; color: var(--teal-light); margin-top: 4px; font-weight: 500; }
+    /* ---- GAPS ---- */
+    .gap-item { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 8px; }
+    .gap-item.urgent { border-color: #3b1111; background: #0f0808; }
+    .gap-item .gap-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .gap-item .gap-pilar { font-weight: 700; font-size: 13px; color: var(--text-primary); }
+    .gap-item .gap-detail { font-size: 12px; color: var(--text-muted); }
+    .gap-item .gap-action { font-size: 11px; color: var(--accent-light); margin-top: 6px; font-weight: 500; }
 
-    .insight-item { background: #060f1c; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 8px; }
-    .insight-item .insight-title { font-weight: 700; font-size: 13px; color: var(--teal-light); margin-bottom: 4px; }
-    .insight-item .insight-body { font-size: 12px; color: var(--text2); line-height: 1.5; }
-    .insight-item .insight-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
-
-    /* Strategy detail */
-    .strat-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 12px; }
-    .strat-item .strat-name { color: var(--teal-light); font-weight: 600; min-width: 130px; }
-    .strat-item .strat-count { color: var(--text2); width: 35px; }
-    .strat-item .strat-pct { color: var(--text3); font-size: 11px; width: 35px; }
-
-    /* View switching */
-    .view { display: none; animation: fadeIn .3s ease; }
-    .view.active { display: block; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
-
-    /* Loading */
-    .loading { text-align:center; padding:60px; color:var(--text3); }
-    .spinner { display:inline-block; width:36px; height:36px; border:3px solid var(--border); border-top-color: var(--teal-light); border-radius:50%; animation: spin .7s linear infinite; margin-bottom: 12px; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    .error-state { background:#2a0f0f; border: 1px solid #5a1a1a; border-radius: 10px; padding: 14px 18px; color: #fca5a5; font-size: 12px; margin-bottom: 16px; }
-
-    /* Calendar */
+    /* ---- CALENDAR ---- */
     .cal-cell { padding: 8px 6px; vertical-align: top; min-width: 120px; }
-    .cal-post { background: var(--surface2); border-radius: 6px; padding: 8px; margin-bottom: 4px; font-size: 11px; }
-    .cal-post .cal-platform { margin-bottom: 2px; }
-    .cal-post .cal-title { color: var(--text2); }
-    .cal-post .cal-meta { color: var(--text3); margin-top: 2px; font-size: 10px; }
+    .cal-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-bottom: 6px; }
+    .cal-title { font-size: 11px; color: var(--text-secondary); line-height: 1.3; }
+    .cal-meta { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
 
-    footer { text-align: center; padding: 24px; color: var(--text3); font-size: 11px; border-top: 1px solid var(--border); margin-top: 32px; }
-    footer strong { color: var(--teal-light); }
+    /* ---- RECOMMENDATIONS ---- */
+    .reco-panel { background: linear-gradient(135deg, #0a1e2e, #060f19); border: 1px solid #1a4654; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .reco-panel h3 { font-size: 13px; color: var(--accent-light); margin-bottom: 16px; font-weight: 700; }
+    .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 8px; }
+    .reco-item { background: #071520; border: 1px solid var(--border); border-radius: 8px; padding: 16px; transition: border-color .15s; }
+    .reco-item:hover { border-color: var(--accent); }
+    .reco-item .reco-title { font-size: 12px; font-weight: 700; color: var(--accent-light); margin-bottom: 6px; }
+    .reco-item .reco-body { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+    /* ---- FOOTER ---- */
+    footer { text-align: center; padding: 24px; color: var(--text-dim); font-size: 11px; border-top: 1px solid var(--border); margin-top: 32px; }
+    footer strong { color: var(--accent-light); }
+
+    /* ---- STATES ---- */
+    .view { display: none; animation: fadeIn .25s ease; }
+    .view.active { display: block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .loading { text-align:center; padding:64px; display:flex; flex-direction:column; align-items:center; gap:16px; }
+    .spinner { width:32px; height:32px; border:2px solid var(--border); border-top-color: var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .error-box { background: #1a0808; border:1px solid #4a1a1a; border-radius:8px; padding:14px 16px; color:#fca5a5; font-size:12px; margin-bottom:16px; }
 
     @media(max-width:768px){
-      .sidebar{width:60px;overflow:hidden}
-      .sidebar nav a span:not(.icon), .sidebar-brand .logo-text, .sidebar-brand .logo-sub, .sidebar-footer .status-text{display:none}
-      .main{margin-left:60px;padding:16px}
-      .charts-row{grid-template-columns:1fr}
+      .sidebar{width:56px;overflow:hidden}
+      .sidebar-brand .brand-name,.sidebar-brand .brand-tag,.sidebar nav a span:not(.icon),.sidebar-footer div{display:none}
+      .sidebar nav a .count{display:none}
+      .main{margin-left:56px;padding:16px}
+      .charts-row,.kpi-grid{grid-template-columns:1fr}
       .kpi-grid{grid-template-columns:repeat(2,1fr)}
-      .kpi-value{font-size:24px}
-      .pilar-bar .pilar-name{width:100px;font-size:10px}
+      .kpi-value{font-size:28px}
+      .pilar-row .pilar-name{width:100px;font-size:10px}
       .topbar{flex-direction:column}
     }
   </style>
 </head>
 <body>
 <div class="layout">
-  <!-- Sidebar -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <div class="logo">
-        <div class="logo-icon">RF</div>
-        <div class="logo-text"><span>RF</span> Consultoría</div>
+      <div class="brand-row">
+        <div class="brand-logo">RF</div>
+        <div class="brand-name"><span>RF</span> Consultoría</div>
       </div>
-      <div class="logo-sub">Strategic Luminance</div>
+      <div class="brand-tag">Strategic Luminance</div>
     </div>
     <nav>
       <a href="#" class="active" data-view="overview" onclick="switchView('overview')">
         <span class="icon">📊</span> <span>Overview</span>
-        <span class="badge-count" id="navTotal">—</span>
+        <span class="count" id="navTotal">—</span>
       </a>
       <a href="#" data-view="trends" onclick="switchView('trends')">
         <span class="icon">🎯</span> <span>Estrategia</span>
       </a>
       <a href="#" data-view="posts" onclick="switchView('posts')">
         <span class="icon">📋</span> <span>Posts</span>
-        <span class="badge-count" id="navPosts">—</span>
+        <span class="count" id="navPosts">—</span>
       </a>
     </nav>
     <div class="sidebar-footer">
-      <span class="status-dot"></span>
-      <div class="status-text">
-        <strong>Athena 🦉</strong><br>
-        Sistema activo
-      </div>
+      <span class="dot"></span>
+      <div><strong>Athena 🦉</strong><br><span>Sistema activo</span></div>
     </div>
   </aside>
 
-  <!-- Main Content -->
+  <!-- MAIN -->
   <main class="main">
-    <!-- Top Bar -->
     <div class="topbar">
-      <div class="topbar-left">
+      <div>
         <h1>Dashboard de Contenido</h1>
-        <div class="breadcrumb">Social Media Analytics · <span id="dateRange">Cargando...</span></div>
+        <div class="subtitle">Social Media Analytics · <strong id="dateRange">Conectando...</strong></div>
       </div>
       <div class="topbar-actions">
         <select class="select-filter" id="filterPlatform" onchange="renderAll()">
@@ -231,369 +230,195 @@
           <option value="30" selected>30 días</option>
           <option value="60">60 días</option>
         </select>
-        <button class="btn" onclick="loadData()">⟳ Actualizar</button>
+        <button class="btn btn-accent" onclick="loadData()">⟳ Actualizar</button>
       </div>
     </div>
 
-    <div id="errorBox" class="error-state" style="display:none;"></div>
-    <div id="loadingBox" class="loading"><div class="spinner"></div><p style="margin-top:12px;">Cargando métricas desde Baserow...</p></div>
+    <div id="errorBox" class="error-box" style="display:none;"></div>
+    <div id="loadingBox" class="loading"><div class="spinner"></div><span style="color:var(--text-dim)">Cargando métricas desde RF Consultoría Integral</span></div>
 
-    <!-- View: Overview -->
+    <!-- OVERVIEW -->
     <div class="view active" id="view-overview">
       <div class="kpi-grid" id="kpiGrid"></div>
       <div class="charts-row">
-        <div class="chart-panel"><h3>Distribución por Plataforma</h3><canvas id="chartPlatform"></canvas></div>
-        <div class="chart-panel"><h3>Rendimiento por Pilar</h3><canvas id="chartPilar"></canvas></div>
+        <div class="panel"><h3>Distribución por Plataforma</h3><canvas id="chartPlatform"></canvas></div>
+        <div class="panel"><h3>Rendimiento por Pilar</h3><canvas id="chartPilar"></canvas></div>
       </div>
       <div class="reco-panel" id="recoPanel">
-        <h3>🎯 Recomendaciones Estratégicas</h3>
+        <h3>🎯 Recomendaciones Estratégicas de Athena</h3>
         <div class="reco-grid" id="recoGrid"></div>
       </div>
     </div>
 
-    <!-- View: Estrategia -->
+    <!-- ESTRATEGIA -->
     <div class="view" id="view-trends">
       <div class="charts-row">
-        <div class="chart-panel">
-          <h3>🎯 Balance de Pilares vs Target</h3>
-          <div id="pilarBars" style="padding:8px 0;"></div>
-        </div>
-        <div class="chart-panel">
-          <h3>⚠️ Gaps Estratégicos</h3>
-          <div id="strategicGaps"></div>
-        </div>
+        <div class="panel"><h3>Balance de Pilares vs Target</h3><div id="pilarBars" style="padding:4px 0;"></div></div>
+        <div class="panel"><h3>Gaps Estratégicos</h3><div id="strategicGaps"></div></div>
       </div>
       <div class="charts-row">
-        <div class="chart-panel" style="grid-column:1/-1;">
-          <h3>📅 Próximos 7 Días</h3>
-          <div style="overflow-x:auto;">
-            <table style="width:100%;">
-              <thead><tr id="nextWeekHeader"></tr></thead>
-              <tbody id="nextWeekBody"></tbody>
-            </table>
-          </div>
-        </div>
+        <div class="panel" style="grid-column:1/-1;"><h3>Próximos 7 Días</h3><div style="overflow-x:auto;"><table style="width:100%;"><thead><tr id="nextWeekHeader"></tr></thead><tbody id="nextWeekBody"></tbody></table></div></div>
       </div>
       <div class="charts-row">
-        <div class="chart-panel">
-          <h3>🧬 Estrategias Aplicadas por Athena</h3>
-          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
-            <canvas id="chartStrategies" style="max-width:200px;max-height:200px;"></canvas>
-            <div id="strategyDetails" style="flex:1;min-width:240px;font-size:12px;"></div>
-          </div>
-        </div>
-        <div class="chart-panel">
-          <h3>📈 Evolución Semanal de Estrategias</h3>
-          <canvas id="chartStrategyEvo"></canvas>
-        </div>
+        <div class="panel"><h3>Estrategias de Athena</h3><div class="strat-grid" id="stratGrid"></div></div>
+        <div class="panel"><h3>Evolución Semanal</h3><canvas id="chartStrategyEvo"></canvas></div>
       </div>
     </div>
 
-    <!-- View: Posts -->
+    <!-- POSTS -->
     <div class="view" id="view-posts">
       <div class="table-panel">
-        <div class="table-panel-header">
-          <h3>Posts Recientes</h3>
-          <span style="font-size:11px;color:var(--text3);" id="postCount"></span>
-        </div>
+        <div class="table-panel-header"><h3>Posts Recientes</h3><span style="font-size:11px;color:var(--text-dim);" id="postCount"></span></div>
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Post</th>
-                <th>Plataforma</th>
-                <th>Pilar</th>
-                <th>Estrategias</th>
-                <th>Formato</th>
-                <th>Fecha</th>
-                <th>Horario</th>
-                <th>Likes</th>
-                <th>Coment.</th>
-              </tr>
-            </thead>
-            <tbody id="postsTbody"></tbody>
-          </table>
+          <table><thead><tr><th>Post</th><th>Plataforma</th><th>Pilar</th><th>Estrategias</th><th>Formato</th><th>Fecha</th><th>Horario</th><th>Likes</th><th>Coment.</th></tr></thead>
+          <tbody id="postsTbody"></tbody></table>
         </div>
       </div>
     </div>
 
-    <footer>
-      🦉 <strong>Athena Analytics</strong> · RF Consultoría Integral © 2026 · <strong>Strategic Luminance</strong>
-    </footer>
+    <footer>🦉 <strong>Athena Analytics</strong> · RF Consultoría Integral © 2026 · <strong>Strategic Luminance</strong></footer>
   </main>
 </div>
 
 <script>
 const STATE = { data: null, charts: {} };
+const stratIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
+const stratNames = { '9a':'Viaje del Héroe', '9b':'Contraste Precios', '9c':'CTA 1-Palabra', '9d':'Tutorial Visual', '9e':'Multiagente', '9f':'CTAs Densos' };
 
 function badge(p) {
   const m = { Instagram: 'badge-ig', Facebook: 'badge-fb', LinkedIn: 'badge-li' };
   return `<span class="badge ${m[p]||''}">${p}</span>`;
 }
 
-function switchView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
-  document.querySelector(`[data-view="${name}"]`).classList.add('active');
-  if (STATE.data) renderAll();
+function switchView(n) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.sidebar nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('view-'+n).classList.add('active');
+  document.querySelector(`[data-view="${n}"]`).classList.add('active');
+  if(STATE.data) renderAll();
 }
 
-function destroyChart(key) {
-  if (STATE.charts[key]) { STATE.charts[key].destroy(); STATE.charts[key] = null; }
-}
+function destroyChart(k) { if(STATE.charts[k]){STATE.charts[k].destroy();STATE.charts[k]=null;} }
 
 async function loadData() {
-  document.getElementById('loadingBox').style.display = 'block';
-  document.getElementById('errorBox').style.display = 'none';
-  
+  document.getElementById('loadingBox').style.display='flex';
+  document.getElementById('errorBox').style.display='none';
   try {
-    const res = await fetch('/api/metrics?days=' + document.getElementById('filterDays').value);
+    const res = await fetch('/api/metrics?days='+document.getElementById('filterDays').value);
     STATE.data = await res.json();
-    if (STATE.data.error) throw new Error(STATE.data.error);
-    document.getElementById('loadingBox').style.display = 'none';
-    document.getElementById('dateRange').textContent = 
-      'Actualizado: ' + new Date(STATE.data.lastUpdated || Date.now()).toLocaleString('es-MX', {dateStyle:'medium',timeStyle:'short'});
+    if(STATE.data.error) throw new Error(STATE.data.error);
+    document.getElementById('loadingBox').style.display='none';
+    document.getElementById('dateRange').textContent = 'Actualizado: '+new Date(STATE.data.lastUpdated||Date.now()).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'});
     renderAll();
-  } catch (err) {
-    document.getElementById('loadingBox').style.display = 'none';
-    document.getElementById('errorBox').style.display = 'block';
-    document.getElementById('errorBox').textContent = 'Error al cargar datos: ' + err.message;
+  } catch(err) {
+    document.getElementById('loadingBox').style.display='none';
+    document.getElementById('errorBox').style.display='block';
+    document.getElementById('errorBox').textContent='Error: '+err.message;
   }
 }
 
 function filterPosts() {
-  if (!STATE.data?.recentPosts) return [];
+  if(!STATE.data?.recentPosts) return [];
   const plat = document.getElementById('filterPlatform').value;
-  return plat === 'all' ? STATE.data.recentPosts : STATE.data.recentPosts.filter(p => p.plataforma === plat);
+  return plat==='all' ? STATE.data.recentPosts : STATE.data.recentPosts.filter(p=>p.plataforma===plat);
 }
 
-function renderAll() {
-  renderKPIs();
-  renderOverviewCharts();
-  renderStrategy();
-  renderPostsTable();
-  renderRecommendations();
-}
+function renderAll() { renderKPIs(); renderOverviewCharts(); renderStrategy(); renderPostsTable(); renderRecommendations(); }
 
 function renderKPIs() {
-  const data = STATE.data;
-  const pc = data?.platformCounts || {};
-  document.getElementById('navTotal').textContent = data?.total || '—';
-  document.getElementById('navPosts').textContent = (data?.recentPosts || []).length || '—';
-  
+  const d = STATE.data, pc = d?.platformCounts||{};
+  document.getElementById('navTotal').textContent = d?.total||'—';
+  document.getElementById('navPosts').textContent = (d?.recentPosts||[]).length||'—';
   document.getElementById('kpiGrid').innerHTML = `
-    <div class="kpi-card total">
-      <div class="kpi-label">Total Posts Activos</div>
-      <div class="kpi-value">${data?.total || 0}</div>
-      <div class="kpi-sub">en ${document.getElementById('filterDays').value} días</div>
-    </div>
-    <div class="kpi-card ig">
-      <div class="kpi-label">📸 Instagram</div>
-      <div class="kpi-value">${pc.Instagram || 0}</div>
-      <div class="kpi-sub">Carruseles y contenido visual</div>
-    </div>
-    <div class="kpi-card fb">
-      <div class="kpi-label">💬 Facebook</div>
-      <div class="kpi-value">${pc.Facebook || 0}</div>
-      <div class="kpi-sub">Posts conversacionales</div>
-    </div>
-    <div class="kpi-card li">
-      <div class="kpi-label">💼 LinkedIn</div>
-      <div class="kpi-value">${pc.LinkedIn || 0}</div>
-      <div class="kpi-sub">Contenido ejecutivo</div>
-    </div>`;
+    <div class="kpi-card total"><div class="kpi-icon">📊</div><div class="kpi-label">Total Posts</div><div class="kpi-value">${d?.total||0}</div><div class="kpi-sub">en ${document.getElementById('filterDays').value} días</div></div>
+    <div class="kpi-card ig"><div class="kpi-icon">📸</div><div class="kpi-label">Instagram</div><div class="kpi-value">${pc.Instagram||0}</div><div class="kpi-sub">Carruseles y visual</div></div>
+    <div class="kpi-card fb"><div class="kpi-icon">💬</div><div class="kpi-label">Facebook</div><div class="kpi-value">${pc.Facebook||0}</div><div class="kpi-sub">Conversacional</div></div>
+    <div class="kpi-card li"><div class="kpi-icon">💼</div><div class="kpi-label">LinkedIn</div><div class="kpi-value">${pc.LinkedIn||0}</div><div class="kpi-sub">Ejecutivo B2B</div></div>`;
 }
 
 function renderOverviewCharts() {
-  const data = STATE.data;
-  if (!data) return;
-  
+  const d = STATE.data; if(!d) return;
   destroyChart('platform');
-  const platKeys = ['Instagram', 'Facebook', 'LinkedIn'];
-  const platVals = platKeys.map(k => data.platformCounts?.[k] || 0);
-  const ctx1 = document.getElementById('chartPlatform');
-  if (ctx1) {
-    STATE.charts.platform = new Chart(ctx1, {
-      type: 'bar',
-      data: { labels: platKeys, datasets: [{ data: platVals, backgroundColor: ['#e1306c33','#1877f233','#0a66c233'], borderColor: ['#e1306c','#1877f2','#0a66c2'], borderWidth: 1.5, borderRadius: 8 }] },
-      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#556680' }, grid: { color: '#1a2d4a' } }, x: { ticks: { color: '#8899b4' }, grid: { display: false } } } }
-    });
-  }
-
+  const platKeys=['Instagram','Facebook','LinkedIn'];
+  const pv=platKeys.map(k=>d.platformCounts?.[k]||0);
+  const c1=document.getElementById('chartPlatform');
+  if(c1) STATE.charts.platform = new Chart(c1,{type:'bar',data:{labels:platKeys,datasets:[{data:pv,backgroundColor:['#e1306c22','#1877f222','#0a66c222'],borderColor:['#e1306c','#1877f2','#0a66c2'],borderWidth:1.5,borderRadius:8}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#6b7d95'},grid:{color:'#1a2842'}},x:{ticks:{color:'#c8d3e6'},grid:{display:false}}}}});
   destroyChart('pilar');
-  const pilKeys = Object.keys(data.pilarCounts || {});
-  const pilVals = Object.values(data.pilarCounts || {});
-  const pilColors = ['#2dd4bf','#818cf8','#f472b6','#34d399','#fbbf24','#f87171'];
-  const ctx2 = document.getElementById('chartPilar');
-  if (ctx2) {
-    STATE.charts.pilar = new Chart(ctx2, {
-      type: 'doughnut',
-      data: { labels: pilKeys, datasets: [{ data: pilVals, backgroundColor: pilVals.map((_,i)=>pilColors[i%6]+'99'), borderColor: pilVals.map((_,i)=>pilColors[i%6]), borderWidth: 1.5 }] },
-      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#8899b4', padding: 14, font: { size: 11 } } } } }
-    });
-  }
+  const pk=Object.keys(d.pilarCounts||{}), pvv=Object.values(d.pilarCounts||{});
+  const pcol=['#2e95a8','#818cf8','#f472b6','#34d399','#fbbf24','#f87171'];
+  const c2=document.getElementById('chartPilar');
+  if(c2) STATE.charts.pilar = new Chart(c2,{type:'doughnut',data:{labels:pk,datasets:[{data:pvv,backgroundColor:pvv.map((_,i)=>pcol[i%6]+'88'),borderColor:pvv.map((_,i)=>pcol[i%6]),borderWidth:1.5}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#c8d3e6',padding:14,font:{size:11}}}}}});
 }
 
 function renderStrategy() {
-  const data = STATE.data;
-  if (!data) return;
-  const pc = data.pilarCounts || {};
-  const platC = data.platformCounts || {};
-  const total = Object.values(pc).reduce((a,b)=>a+b,0) || 1;
-  const targets = { 'Automatización': 27, 'Soporte Técnico': 27, 'IA': 18, 'Capacitación': 18, 'Transformación Digital': 10 };
-  const colors = { 'Automatización':'#3b82f6', 'Soporte Técnico':'#f59e0b', 'IA':'#a78bfa', 'Capacitación':'#34d399', 'Transformación Digital':'#f472b6' };
-  
-  let barsHtml = '';
-  const gaps = [];
-  Object.entries(targets).forEach(([pilar, targetPct]) => {
-    const actual = pc[pilar] || 0;
-    const actualPct = ((actual/total)*100);
-    const diff = actualPct - targetPct;
-    const status = diff < -3 ? '🔴' : diff < 0 ? '🟡' : '🟢';
-    const barColor = colors[pilar] || '#64748b';
-    if (diff < -2) gaps.push({ pilar, actual, targetPct, actualPct: actualPct.toFixed(1), diff: diff.toFixed(1) });
-    barsHtml += `<div class="pilar-bar">
-      <span class="pilar-name">${pilar}</span>
-      <div class="bar-track"><div class="bar-fill" style="background:${barColor};width:${Math.min(actualPct,100)}%"></div><div class="bar-target" style="left:${targetPct}%"></div></div>
-      <span class="bar-pct">${actualPct.toFixed(0)}%</span>
-      <span class="bar-diff">${status} ${diff>0?'+':''}${diff.toFixed(0)}%</span>
-    </div>`;
+  const d = STATE.data; if(!d) return;
+  const pc = d.pilarCounts||{}, platC = d.platformCounts||{}, total=Object.values(pc).reduce((a,b)=>a+b,0)||1;
+  const targets = {'Automatización':27,'Soporte Técnico':27,'IA':18,'Capacitación':18,'Transformación Digital':10};
+  const colors = {'Automatización':'#3b82f6','Soporte Técnico':'#f59e0b','IA':'#a78bfa','Capacitación':'#34d399','Transformación Digital':'#f472b6'};
+
+  // Pilar bars
+  let bars='', gaps=[];
+  Object.entries(targets).forEach(([p,tp])=>{
+    const a=pc[p]||0, ap=((a/total)*100), diff=ap-tp;
+    const s=diff<-3?'🔴':diff<0?'🟡':'🟢';
+    if(diff<-2) gaps.push({pilar:p,actual:a,targetPct:tp,actualPct:ap.toFixed(1),diff:diff.toFixed(1)});
+    bars+=`<div class="pilar-row"><span class="pilar-name">${p}</span><div class="bar-track"><div class="bar-fill" style="background:${colors[p]};width:${Math.min(ap,100)}%"></div><div class="bar-marker" style="left:${tp}%"></div></div><span class="bar-val">${ap.toFixed(0)}%</span><span class="bar-diff">${s} ${diff>0?'+':''}${diff.toFixed(0)}%</span></div>`;
   });
-  document.getElementById('pilarBars').innerHTML = barsHtml;
+  document.getElementById('pilarBars').innerHTML=bars;
 
-  let gapsHtml = '';
-  if (gaps.length === 0) {
-    gapsHtml = '<p style="color:var(--green);font-size:12px;padding:16px;">✅ Todos los pilares dentro del rango objetivo</p>';
-  } else {
-    gaps.forEach(g => {
-      const needed = Math.max(1, Math.ceil((g.targetPct * total / 100) - g.actual));
-      gapsHtml += `<div class="gap-item">
-        <div class="gap-title">🔴 ${g.pilar}</div>
-        <div class="gap-desc">${g.actualPct}% actual vs ${g.targetPct}% objetivo (${g.diff}%)</div>
-        <div class="gap-action">→ Crear <b>${needed} post${needed!==1?'s':''}</b> de ${g.pilar}</div>
-      </div>`;
-    });
-  }
-  const igPct = ((platC.Instagram||0)/total*100).toFixed(0);
-  const fbPct = ((platC.Facebook||0)/total*100).toFixed(0);
-  const liPct = ((platC.LinkedIn||0)/total*100).toFixed(0);
-  gapsHtml += `<div class="insight-item">
-    <div class="insight-title">📱 Distribución de Plataformas</div>
-    <div class="insight-body">Instagram ${igPct}% · Facebook ${fbPct}% · LinkedIn ${liPct}%</div>
-    <div class="insight-hint">${parseInt(liPct)<25?'→ LinkedIn bajo. Priorizar contenido ejecutivo. ':''}${parseInt(fbPct)<20?'→ Facebook bajo. Reforzar posts conversacionales. ':''}${parseInt(igPct)>40?'→ Instagram alto. Redistribuir. ':''}</div>
-  </div>`;
-  document.getElementById('strategicGaps').innerHTML = gapsHtml;
+  // Gaps
+  let gHtml='';
+  if(!gaps.length) gHtml='<p style="color:var(--success);font-size:12px;padding:12px;">✅ Todos los pilares dentro del rango objetivo</p>';
+  else gaps.forEach(g=>{const n=Math.max(1,Math.ceil((g.targetPct*total/100)-g.actual));gHtml+=`<div class="gap-item urgent"><div class="gap-head"><span>🔴</span><span class="gap-pilar">${g.pilar}</span></div><div class="gap-detail">${g.actualPct}% actual vs ${g.targetPct}% objetivo (${g.diff}%)</div><div class="gap-action">→ Crear <b>${n} post${n!==1?'s':''}</b> de ${g.pilar}</div></div>`;});
+  const ip=((platC.Instagram||0)/total*100).toFixed(0), fp=((platC.Facebook||0)/total*100).toFixed(0), lp=((platC.LinkedIn||0)/total*100).toFixed(0);
+  gHtml+=`<div class="gap-item"><div class="gap-head"><span>📱</span><span class="gap-pilar">Distribución Plataformas</span></div><div class="gap-detail">Instagram ${ip}% · Facebook ${fp}% · LinkedIn ${lp}%</div><div class="gap-action">${parseInt(lp)<25?'→ LinkedIn bajo. Priorizar contenido ejecutivo. ':''}${parseInt(fp)<20?'→ Facebook bajo. Reforzar posts. ':''}${parseInt(ip)>40?'→ Instagram alto. Redistribuir. ':''}</div></div>`;
+  document.getElementById('strategicGaps').innerHTML=gHtml;
 
-  // Strategy charts
-  const strategyNames = { '9a':'Viaje del Héroe', '9b':'Contraste Precios', '9c':'CTA 1-Palabra', '9d':'Tutorial Visual', '9e':'Multiagente', '9f':'CTAs Densos' };
-  const strategyIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
-  const sc = data.strategyCounts || {};
-  
-  destroyChart('strategies');
-  const ctxS = document.getElementById('chartStrategies');
-  if (ctxS && Object.keys(sc).length > 0) {
-    const sKeys = Object.keys(sc), sVals = Object.values(sc);
-    STATE.charts.strategies = new Chart(ctxS, {
-      type: 'doughnut',
-      data: { labels: sKeys.map(k=>strategyNames[k]||k), datasets: [{ data: sVals, backgroundColor: ['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'], borderColor: '#0d1525', borderWidth: 2 }] },
-      options: { responsive: true, plugins: { legend: { display: false } } }
-    });
-  }
-  
-  const totalStrat = Object.values(sc).reduce((a,b)=>a+b,0) || 1;
-  let stratHtml = '';
-  Object.entries(strategyNames).forEach(([k, name]) => {
-    const count = sc[k] || 0;
-    const pct = ((count/totalStrat)*100).toFixed(0);
-    const color = count > 0 ? '#2dd4bf' : '#374151';
-    stratHtml += `<div class="strat-item"><span>${strategyIcons[k]}</span><span class="strat-name">${name}</span><span class="strat-count">${count}</span><span class="strat-pct">${pct}%</span></div>`;
+  // Strategy cards
+  const sc = d.strategyCounts||{}, tS=Object.values(sc).reduce((a,b)=>a+b,0)||1;
+  let sGrid='';
+  Object.entries(stratNames).forEach(([k,n])=>{
+    const c=sc[k]||0, pct=((c/tS)*100).toFixed(0);
+    sGrid+=`<div class="strat-card${c===0?'':' highlight'}"><div class="strat-icon">${stratIcons[k]}</div><div class="strat-label">${n}</div><div class="strat-count">${c}</div><div class="strat-pct">${pct}%</div></div>`;
   });
-  const missing = Object.entries(strategyNames).filter(([k])=>!sc[k]);
-  if (missing.length) stratHtml += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;"><span style="color:var(--amber);">⚠️ Sin aplicar: </span><span style="color:var(--text3);">${missing.map(([k,n])=>strategyIcons[k]+' '+n).join(' · ')}</span></div>`;
-  document.getElementById('strategyDetails').innerHTML = stratHtml;
+  const missing=Object.entries(stratNames).filter(([k])=>!sc[k]);
+  if(missing.length) sGrid+=`<div class="strat-card" style="border-color:#3b1111;"><div class="strat-icon">⚠️</div><div class="strat-label" style="color:#fca5a5;">Sin aplicar</div><div class="strat-count" style="font-size:13px;color:#fca5a5;">${missing.map(([k])=>stratIcons[k]).join('')}</div></div>`;
+  document.getElementById('stratGrid').innerHTML=sGrid;
 
+  // Evolution chart
   destroyChart('strategyEvo');
-  const sw = data.strategyByWeek || {};
-  const weeksSorted = Object.keys(sw).sort().slice(-6);
-  const ctxE = document.getElementById('chartStrategyEvo');
-  if (ctxE && weeksSorted.length > 0) {
-    const datasets = Object.entries(strategyNames).map(([k, name], i) => ({
-      label: name, data: weeksSorted.map(w => sw[w]?.[k] || 0),
-      borderColor: ['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],
-      backgroundColor: 'transparent', tension: 0.3, borderWidth: 2, pointRadius: 3
-    }));
-    STATE.charts.strategyEvo = new Chart(ctxE, {
-      type: 'line', data: { labels: weeksSorted, datasets },
-      options: { responsive: true, plugins: { legend: { labels: { color: '#8899b4', padding: 8, font: { size: 10 }, boxWidth: 12 } } }, scales: { y: { beginAtZero: true, ticks: { color: '#556680', stepSize: 1 }, grid: { color: '#1a2d4a' } }, x: { ticks: { color: '#8899b4' }, grid: { display: false } } } }
-    });
+  const sw=d.strategyByWeek||{}, ws=Object.keys(sw).sort().slice(-6);
+  const ce=document.getElementById('chartStrategyEvo');
+  if(ce&&ws.length>0){
+    const ds=Object.entries(stratNames).map(([k,n],i)=>({label:n,data:ws.map(w=>sw[w]?.[k]||0),borderColor:['#2e95a8','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],backgroundColor:'transparent',tension:.3,borderWidth:2,pointRadius:3}));
+    STATE.charts.strategyEvo=new Chart(ce,{type:'line',data:{labels:ws,datasets:ds},options:{responsive:true,plugins:{legend:{labels:{color:'#c8d3e6',padding:8,font:{size:10},boxWidth:12}}},scales:{y:{beginAtZero:true,ticks:{color:'#6b7d95',stepSize:1},grid:{color:'#1a2842'}},x:{ticks:{color:'#c8d3e6'},grid:{display:false}}}}});
   }
 
   // Calendar
-  const posts = data.recentPosts || [];
-  const today = new Date(); today.setHours(0,0,0,0);
-  const next7 = new Date(today); next7.setDate(next7.getDate()+7);
-  const upcoming = posts.filter(p => { if(!p.fecha) return false; const d=new Date(p.fecha+'T12:00:00'); return d>=today && d<=next7; }).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
-  const days = [], dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  for (let i=0; i<7; i++) {
-    const d = new Date(today); d.setDate(d.getDate()+i);
-    const ds = d.toISOString().slice(0,10);
-    days.push({ label: `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`, date: ds, posts: upcoming.filter(p=>p.fecha===ds) });
-  }
-  document.getElementById('nextWeekHeader').innerHTML = days.map(d => `<th style="text-align:center;min-width:110px;">${d.label}</th>`).join('');
-  document.getElementById('nextWeekBody').innerHTML = `<tr>${days.map(d => {
-    if (d.posts.length === 0) return `<td style="text-align:center;color:var(--text3);padding:16px 8px;">—</td>`;
-    return `<td class="cal-cell">${d.posts.map(p => `
-      <div class="cal-post">
-        <div class="cal-platform">${badge(p.plataforma)}</div>
-        <div class="cal-title">${(p.titulo||'').slice(0,35)}${(p.titulo||'').length>35?'…':''}</div>
-        <div class="cal-meta">${p.pilar} · ${p.horario||''}</div>
-      </div>`).join('')}</td>`;
-  }).join('')}</tr>`;
+  const posts=d.recentPosts||[], today=new Date(); today.setHours(0,0,0,0);
+  const n7=new Date(today); n7.setDate(n7.getDate()+7);
+  const up=posts.filter(p=>{if(!p.fecha)return false;const dd=new Date(p.fecha+'T12:00:00');return dd>=today&&dd<=n7;}).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const days=[], dn=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  for(let i=0;i<7;i++){const dd=new Date(today);dd.setDate(dd.getDate()+i);days.push({label:`${dn[dd.getDay()]} ${dd.getDate()}/${dd.getMonth()+1}`,date:dd.toISOString().slice(0,10),posts:up.filter(p=>p.fecha===dd.toISOString().slice(0,10))});}
+  document.getElementById('nextWeekHeader').innerHTML=days.map(d=>`<th style="text-align:center;min-width:115px;padding:10px 6px;">${d.label}</th>`).join('');
+  document.getElementById('nextWeekBody').innerHTML=`<tr>${days.map(d=>{if(!d.posts.length)return'<td style="text-align:center;color:var(--text-dim);padding:16px 8px;">—</td>';return`<td class="cal-cell">${d.posts.map(p=>`<div style="margin-bottom:8px;"><div class="cal-badge badge-${p.plataforma==='Instagram'?'ig':p.plataforma==='Facebook'?'fb':'li'}">${p.plataforma}</div><div class="cal-title">${(p.titulo||'').slice(0,35)}${(p.titulo||'').length>35?'…':''}</div><div class="cal-meta">${p.pilar} · ${p.horario||''}</div></div>`).join('')}</td>`;}).join('')}</tr>`;
 }
 
 function renderPostsTable() {
-  const posts = filterPosts();
-  document.getElementById('postCount').textContent = `${posts.length} posts`;
-  const stratIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
-  document.getElementById('postsTbody').innerHTML = posts.slice(0, 30).map(p => `
-    <tr>
-      <td title="${p.titulo||''}">${(p.titulo||'').slice(0,50)}${(p.titulo||'').length>50?'…':''}</td>
-      <td>${badge(p.plataforma)}</td>
-      <td>${p.pilar||'—'}</td>
-      <td>${(p.estrategias||[]).map(s=>stratIcons[s]||'').join('') || '<span class="metric-null">—</span>'}</td>
-      <td>${p.formato||'—'}</td>
-      <td style="white-space:nowrap">${p.fecha||'—'}</td>
-      <td style="white-space:nowrap;color:var(--text3);">${p.horario||'—'}</td>
-      <td>${p.likes != null ? p.likes : '<span class="metric-null">—</span>'}</td>
-      <td>${p.comentarios != null ? p.comentarios : '<span class="metric-null">—</span>'}</td>
-    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:32px;">No hay posts en este período</td></tr>';
+  const posts=filterPosts();
+  document.getElementById('postCount').textContent=`${posts.length} posts`;
+  document.getElementById('postsTbody').innerHTML=posts.slice(0,30).map(p=>`<tr><td title="${p.titulo||''}">${(p.titulo||'').slice(0,50)}${(p.titulo||'').length>50?'…':''}</td><td>${badge(p.plataforma)}</td><td>${p.pilar||'—'}</td><td>${(p.estrategias||[]).map(s=>stratIcons[s]||'').join('')||'<span class="text-dim">—</span>'}</td><td>${p.formato||'—'}</td><td style="white-space:nowrap">${p.fecha||'—'}</td><td style="white-space:nowrap;color:var(--text-dim);">${p.horario||'—'}</td><td>${p.likes!=null?p.likes:'<span class="text-dim">—</span>'}</td><td>${p.comentarios!=null?p.comentarios:'<span class="text-dim">—</span>'}</td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:32px;">No hay posts en este período</td></tr>';
 }
 
 function renderRecommendations() {
-  const data = STATE.data;
-  const pc = data?.pilarCounts || {};
-  const total = Object.values(pc).reduce((a,b)=>a+b,0);
-  const recos = [];
-  
-  if (Object.keys(pc).length > 0) {
-    const targets = { 'Automatización': 27, 'Soporte Técnico': 27, 'IA': 18, 'Capacitación': 18, 'Transformación Digital': 10 };
-    const worst = Object.entries(targets).reduce((a,[k,v]) => { const pct = ((pc[k]||0)/total*100); return pct-v < a.diff ? {pilar:k,diff:pct-v} : a; }, {pilar:'',diff:0});
-    if (worst.diff < -2) recos.push({ title: '⚖️ Balance de Pilares', body: `"${worst.pilar}" está ${Math.abs(worst.diff).toFixed(0)}% bajo el target. Prioriza contenido de este pilar esta semana.` });
-  }
-
-  const platC = data?.platformCounts || {};
-  if ((platC.Instagram||0) > (platC.LinkedIn||0) + 5) recos.push({ title: '📱 Saturación Instagram', body: 'Hay muchos más posts en Instagram que LinkedIn. LinkedIn tiene mejor engagement B2B. Considera redistribuir.' });
-  
-  const sc = data?.strategyCounts || {};
-  if (!sc['9f']) recos.push({ title: '📊 CTAs Densos sin usar', body: 'La estrategia 9f (múltiples CTAs en carruseles) no se ha aplicado. Úsala en el próximo carrusel de 6+ slides.' });
-  if (!sc['9c'] || sc['9c'] < 5) recos.push({ title: '🎯 Aumenta CTAs 1-Palabra', body: 'Los posts con keyword (OPUS, AGENTE) disparan el funnel Aria → DM. Usa CTAs de 1 palabra en más posts.' });
-  
-  recos.push({ title: '🌐 Tráfico Web (Regla 3b)', body: 'Recuerda: al menos 1 de cada 5 posts debe tener CTA a rfconsultoriaintegral.com.mx con oferta de diagnóstico gratuito.' });
-  recos.push({ title: '🔗 Automatización + Capacitación', body: 'Cada post de automatización debe mencionar la importancia de capacitar al equipo. Son dos caras de la misma moneda.' });
-  recos.push({ title: '🎬 Tutorial Visual (Regla 9d)', body: 'Los carruseles tutoriales funcionan bien en Instagram. Mantén al menos 1 por semana con pilar IA o Automatización.' });
-
-  document.getElementById('recoGrid').innerHTML = recos.map(r => `<div class="reco-item"><div class="reco-title">${r.title}</div><div class="reco-body">${r.body}</div></div>`).join('');
+  const d=STATE.data,pc=d?.pilarCounts||{},total=Object.values(pc).reduce((a,b)=>a+b,0),recos=[];
+  if(Object.keys(pc).length){const t={'Automatización':27,'Soporte Técnico':27,'IA':18,'Capacitación':18,'Transformación Digital':10};const w=Object.entries(t).reduce((a,[k,v])=>{const p=((pc[k]||0)/total*100);return p-v<a.diff?{pilar:k,diff:p-v}:a;},{pilar:'',diff:0});if(w.diff<-2)recos.push({title:'⚖️ Balance de Pilares',body:`"${w.pilar}" está ${Math.abs(w.diff).toFixed(0)}% bajo el target. Prioriza contenido de este pilar esta semana.`});}
+  const plc=d?.platformCounts||{};if((plc.Instagram||0)>(plc.LinkedIn||0)+5)recos.push({title:'📱 Saturación Instagram',body:'Hay más posts en Instagram que LinkedIn. Redistribuye contenido ejecutivo a LinkedIn.'});
+  const sc=d?.strategyCounts||{};if(!sc['9f'])recos.push({title:'📊 CTAs Densos sin usar',body:'La estrategia 9f no se ha aplicado. Úsala en carruseles de 6+ slides con 2 CTAs complementarios.'});if(!sc['9c']||sc['9c']<5)recos.push({title:'🎯 Aumenta CTAs 1-Palabra',body:'Posts con keyword activan funnel Aria→DM. Usa OPUS o AGENTE en más CTAs.'});
+  recos.push({title:'🌐 Tráfico Web (Regla 3b)',body:'1 de cada 5 posts debe linkear a rfconsultoriaintegral.com.mx con diagnóstico gratuito.'});
+  recos.push({title:'🔗 Automatización + Capacitación',body:'Siempre conectar: implementar + capacitar. No vender uno sin el otro.'});
+  recos.push({title:'🎬 Tutorial Visual (9d)',body:'1 carrusel tutorial por semana con pilar IA o Automatización. Muestra el proceso, no solo el resultado.'});
+  document.getElementById('recoGrid').innerHTML=recos.map(r=>`<div class="reco-item"><div class="reco-title">${r.title}</div><div class="reco-body">${r.body}</div></div>`).join('');
 }
 
 loadData();
