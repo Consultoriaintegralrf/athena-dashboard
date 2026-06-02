@@ -52,11 +52,7 @@ export default async function handler(req, res) {
   }
 
   // No code — initiate OAuth
-  const authUrl = 'https://www.linkedin.com/oauth/v2/authorization' +
-    `?response_type=code` +
-    `&client_id=${CLIENT_ID}` +
-    `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&scope=openid%20profile%20email%20w_member_social`;
+  const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=https://athena-dashboard-six.vercel.app/api/linkedin-auth&scope=openid%20profile%20email%20w_member_social`;
 
   res.redirect(302, authUrl);
 }
