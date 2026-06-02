@@ -341,7 +341,7 @@ const stratIcons={'9a':'📖','9b':'💰','9c':'🎯','9d':'🎬','9e':'🤖','9
 const stratNames={'9a':'Viaje del Héroe','9b':'Contraste Precios','9c':'CTA 1-Palabra','9d':'Tutorial Visual','9e':'Multiagente','9f':'CTAs Densos'};
 
 function badge(p){const m={Instagram:'badge-ig',Facebook:'badge-fb',LinkedIn:'badge-li'};return `<span class="badge ${m[p]||''}">${p}</span>`;}
-function sV(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.sidebar nav a').forEach(a=>{a.classList.remove('active');a.removeAttribute('aria-current')});document.getElementById('view-'+n).classList.add('active');const lnk=document.querySelector(`[data-view="${n}"]`);lnk.classList.add('active');lnk.setAttribute('aria-current','page');if(STATE.data){if(n==='trends')rStrategy();else if(n==='posts')rPostsTable();}}
+function switchView(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.sidebar nav a').forEach(a=>{a.classList.remove('active');a.removeAttribute('aria-current')});document.getElementById('view-'+n).classList.add('active');const lnk=document.querySelector(`[data-view="${n}"]`);lnk.classList.add('active');lnk.setAttribute('aria-current','page');if(STATE.data){if(n==='trends')rStrategy();else if(n==='posts')rPostsTable();}}
 function dC(k){if(STATE.charts[k]){STATE.charts[k].destroy();STATE.charts[k]=null;}}
 
 async function loadData(){
