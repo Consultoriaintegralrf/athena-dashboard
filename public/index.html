@@ -4,19 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Athena Analytics 🦉 | RF Consultoría Integral</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0f1e'/><text x='50' y='68' text-anchor='middle' font-size='48' font-weight='900' font-family='sans-serif' fill='%232dd4bf'>RF</text><circle cx='78' cy='28' r='12' fill='%232dd4bf' opacity='.3'/><circle cx='78' cy='28' r='4' fill='%232dd4bf'/></svg>">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #0a0f1e;
-      --surface: #111827;
-      --surface2: #1a2236;
-      --border: #1e2d4a;
+      --bg: #060b16;
+      --surface: #0d1525;
+      --surface2: #141f35;
+      --border: #1a2d4a;
       --navy: #1e3a5f;
+      --navy-light: #264b7a;
       --teal: #0d9488;
       --teal-light: #2dd4bf;
-      --text: #e2e8f0;
-      --text2: #94a3b8;
-      --text3: #64748b;
+      --teal-glow: #2dd4bf22;
+      --text: #e8edf5;
+      --text2: #8899b4;
+      --text3: #556680;
       --red: #ef4444;
       --green: #22c55e;
       --amber: #f59e0b;
@@ -25,98 +28,152 @@
       --li: #0a66c2;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+    
+    /* Layout */
+    .layout { display: flex; min-height: 100vh; }
     
     /* Sidebar */
-    .layout { display: flex; min-height: 100vh; }
-    .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; display: flex; flex-direction: column; }
-    .sidebar-brand { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
-    .sidebar-brand h2 { font-size: 18px; font-weight: 700; }
-    .sidebar-brand h2 span { color: var(--teal-light); }
-    .sidebar-brand p { font-size: 11px; color: var(--text3); margin-top: 2px; }
-    .sidebar nav { flex:1; padding: 0 12px; }
-    .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 2px; transition: all .15s; }
-    .sidebar nav a:hover, .sidebar nav a.active { background: var(--navy); color: var(--teal-light); }
-    .sidebar nav a .icon { font-size: 16px; width: 20px; text-align: center; }
-    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); }
-    .sidebar-footer .dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 6px; animation: pulse-dot 2s infinite; }
-    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .sidebar { width: 250px; background: var(--surface); border-right: 1px solid var(--border); position: fixed; top:0; left:0; bottom:0; z-index:10; display:flex; flex-direction:column; }
+    .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-brand .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .sidebar-brand .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--teal), var(--navy-light)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; color: #fff; }
+    .sidebar-brand .logo-text { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .sidebar-brand .logo-text span { color: var(--teal-light); }
+    .sidebar-brand .logo-sub { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+    .sidebar nav { flex:1; padding: 8px 12px; }
+    .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; margin-bottom: 2px; transition: all .15s; position: relative; }
+    .sidebar nav a:hover { background: var(--surface2); color: var(--text); }
+    .sidebar nav a.active { background: linear-gradient(135deg, var(--teal), var(--navy)); color: #fff; box-shadow: 0 2px 12px var(--teal-glow); }
+    .sidebar nav a .icon { font-size: 16px; width: 22px; text-align: center; }
+    .sidebar nav a .badge-count { margin-left: auto; background: var(--surface2); color: var(--text2); font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 600; }
+    .sidebar nav a.active .badge-count { background: #ffffff22; color: #fff; }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .sidebar-footer .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .sidebar-footer .status-text { font-size: 11px; color: var(--text3); }
+    .sidebar-footer .status-text strong { color: var(--text2); }
 
     /* Main */
-    .main { margin-left: 240px; flex: 1; padding: 24px 32px; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
-    .topbar h1 { font-size: 26px; font-weight: 700; }
-    .topbar-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-    .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all .15s; }
-    .btn-ghost { background: transparent; color: var(--text2); }
-    .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+    .main { margin-left: 250px; flex: 1; padding: 28px 36px; max-width: 1400px; }
+    
+    /* Topbar */
+    .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+    .topbar-left h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+    .topbar-left .breadcrumb { font-size: 12px; color: var(--text3); margin-top: 2px; }
+    .topbar-actions { display: flex; gap: 8px; align-items: center; }
+    .btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all .15s; background: transparent; color: var(--text2); display: inline-flex; align-items: center; gap: 6px; }
+    .btn:hover { background: var(--surface2); color: var(--text); border-color: var(--text3); }
     .btn-primary { background: var(--teal); color: #fff; border-color: var(--teal); }
-    .btn-primary:hover { background: #0f766e; }
-    .select-filter { padding: 8px 12px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 13px; cursor: pointer; }
+    .btn-primary:hover { background: #0f766e; border-color: #0f766e; }
+    .select-filter { padding: 8px 12px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 12px; cursor: pointer; font-weight: 500; }
+    .select-filter:focus { outline: none; border-color: var(--teal); }
 
     /* KPI Grid */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 24px; }
-    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: relative; overflow: hidden; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; position: relative; overflow: hidden; transition: transform .15s, box-shadow .15s; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
     .kpi-card::before { content: ''; position: absolute; top:0; left:0; right:0; height: 3px; }
     .kpi-card.ig::before { background: var(--ig); }
     .kpi-card.fb::before { background: var(--fb); }
     .kpi-card.li::before { background: var(--li); }
     .kpi-card.total::before { background: linear-gradient(90deg, var(--teal-light), var(--ig), var(--fb), var(--li)); }
-    .kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 8px; }
-    .kpi-value { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
-    .kpi-trend { font-size: 12px; margin-top: 6px; font-weight: 500; }
-    .kpi-trend.up { color: var(--green); }
-    .kpi-trend.down { color: var(--red); }
-    .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .kpi-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 10px; }
+    .kpi-value { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; }
+    .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
 
-    /* Charts row */
-    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
-    .charts-row.full { grid-template-columns: 1fr; }
-    .chart-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-    .chart-panel h3 { font-size: 13px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
-    .chart-panel canvas { max-height: 300px; }
+    /* Charts */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .chart-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+    .chart-panel h3 { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; font-weight: 700; }
+    .chart-panel canvas { max-height: 280px; }
+
+    /* Pilar bars */
+    .pilar-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .pilar-bar .pilar-name { width: 170px; font-size: 12px; color: var(--text2); text-align: right; }
+    .pilar-bar .bar-track { flex:1; background: var(--bg); border-radius: 6px; height: 22px; position: relative; overflow: hidden; }
+    .pilar-bar .bar-fill { height: 100%; border-radius: 6px; transition: width .6s ease; }
+    .pilar-bar .bar-target { position: absolute; top:0; bottom:0; width: 2px; background: #fff; opacity: .4; }
+    .pilar-bar .bar-pct { font-size: 12px; width: 42px; text-align: right; }
+    .pilar-bar .bar-diff { font-size: 11px; width: 55px; }
 
     /* Table */
-    .table-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
-    .table-panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .table-panel-header h3 { font-size: 13px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; }
+    .table-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+    .table-panel-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .table-panel-header h3 { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text3); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
-    td { padding: 12px 16px; border-bottom: 1px solid #0f172a; }
-    tr:hover td { background: #0f172a; }
-    .badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; }
-    .badge-ig { background: #e1306c20; color: #f472b6; }
-    .badge-fb { background: #1877f220; color: #60a5fa; }
-    .badge-li { background: #0a66c220; color: #38bdf8; }
-    .metric-null { color: var(--text3); font-style: italic; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text3); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .8px; white-space: nowrap; }
+    td { padding: 10px 14px; border-bottom: 1px solid #060b16; }
+    tr:hover td { background: #0a0f1e; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: .3px; }
+    .badge-ig { background: #e1306c18; color: #f472b6; }
+    .badge-fb { background: #1877f218; color: #60a5fa; }
+    .badge-li { background: #0a66c218; color: #38bdf8; }
+    .metric-null { color: var(--text3); font-style: italic; opacity: .6; }
 
     /* Recommendation */
-    .reco-panel { background: linear-gradient(135deg, #0d2b3e, #0a1a2b); border: 1px solid #1e4a5f; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-    .reco-panel h3 { color: var(--teal-light); font-size: 15px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .reco-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
-    .reco-item { background: #0f1a2e; border: 1px solid #1e3a4f; border-radius: 8px; padding: 16px; }
-    .reco-item .reco-title { font-size: 13px; font-weight: 700; color: var(--teal-light); margin-bottom: 6px; }
+    .reco-panel { background: linear-gradient(135deg, #0a1a30, #060f1e); border: 1px solid #1a3a5a; border-radius: 14px; padding: 24px; margin-bottom: 24px; }
+    .reco-panel h3 { color: var(--teal-light); font-size: 14px; margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .reco-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+    .reco-item { background: #080f1c; border: 1px solid #162540; border-radius: 10px; padding: 16px; transition: border-color .15s; }
+    .reco-item:hover { border-color: var(--teal); }
+    .reco-item .reco-title { font-size: 12px; font-weight: 700; color: var(--teal-light); margin-bottom: 6px; }
     .reco-item .reco-body { font-size: 12px; color: var(--text2); line-height: 1.5; }
 
+    /* Gap items */
+    .gap-item { background: #180a0a; border: 1px solid #3b1111; border-radius: 10px; padding: 14px; margin-bottom: 8px; }
+    .gap-item .gap-title { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+    .gap-item .gap-desc { font-size: 12px; color: var(--text2); }
+    .gap-item .gap-action { font-size: 11px; color: var(--teal-light); margin-top: 4px; font-weight: 500; }
+
+    .insight-item { background: #060f1c; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 8px; }
+    .insight-item .insight-title { font-weight: 700; font-size: 13px; color: var(--teal-light); margin-bottom: 4px; }
+    .insight-item .insight-body { font-size: 12px; color: var(--text2); line-height: 1.5; }
+    .insight-item .insight-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+    /* Strategy detail */
+    .strat-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 12px; }
+    .strat-item .strat-name { color: var(--teal-light); font-weight: 600; min-width: 130px; }
+    .strat-item .strat-count { color: var(--text2); width: 35px; }
+    .strat-item .strat-pct { color: var(--text3); font-size: 11px; width: 35px; }
+
     /* View switching */
-    .view { display: none; }
+    .view { display: none; animation: fadeIn .3s ease; }
     .view.active { display: block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
 
     /* Loading */
-    .loading { text-align:center; padding:48px; color:var(--text3); }
-    .spinner { display:inline-block; width:32px; height:32px; border:3px solid var(--border); border-top-color: var(--teal-light); border-radius:50%; animation: spin .8s linear infinite; }
+    .loading { text-align:center; padding:60px; color:var(--text3); }
+    .spinner { display:inline-block; width:36px; height:36px; border:3px solid var(--border); border-top-color: var(--teal-light); border-radius:50%; animation: spin .7s linear infinite; margin-bottom: 12px; }
     @keyframes spin { to{transform:rotate(360deg)} }
-    .error-state { background:#3b1111; color:#fca5a5; padding:16px 20px; border-radius:8px; margin-bottom:16px; font-size:13px; }
+    .error-state { background:#2a0f0f; border: 1px solid #5a1a1a; border-radius: 10px; padding: 14px 18px; color: #fca5a5; font-size: 12px; margin-bottom: 16px; }
+
+    /* Calendar */
+    .cal-cell { padding: 8px 6px; vertical-align: top; min-width: 120px; }
+    .cal-post { background: var(--surface2); border-radius: 6px; padding: 8px; margin-bottom: 4px; font-size: 11px; }
+    .cal-post .cal-platform { margin-bottom: 2px; }
+    .cal-post .cal-title { color: var(--text2); }
+    .cal-post .cal-meta { color: var(--text3); margin-top: 2px; font-size: 10px; }
+
+    footer { text-align: center; padding: 24px; color: var(--text3); font-size: 11px; border-top: 1px solid var(--border); margin-top: 32px; }
+    footer strong { color: var(--teal-light); }
 
     @media(max-width:768px){
       .sidebar{width:60px;overflow:hidden}
-      .sidebar nav a span:not(.icon){display:none}
-      .sidebar-brand h2,.sidebar-brand p{display:none}
+      .sidebar nav a span:not(.icon), .sidebar-brand .logo-text, .sidebar-brand .logo-sub, .sidebar-footer .status-text{display:none}
       .main{margin-left:60px;padding:16px}
       .charts-row{grid-template-columns:1fr}
       .kpi-grid{grid-template-columns:repeat(2,1fr)}
       .kpi-value{font-size:24px}
+      .pilar-bar .pilar-name{width:100px;font-size:10px}
+      .topbar{flex-direction:column}
     }
   </style>
 </head>
@@ -125,23 +182,31 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <h2>🦉 <span>Athena</span></h2>
-      <p>Social Media Analytics</p>
+      <div class="logo">
+        <div class="logo-icon">RF</div>
+        <div class="logo-text"><span>RF</span> Consultoría</div>
+      </div>
+      <div class="logo-sub">Strategic Luminance</div>
     </div>
     <nav>
       <a href="#" class="active" data-view="overview" onclick="switchView('overview')">
         <span class="icon">📊</span> <span>Overview</span>
+        <span class="badge-count" id="navTotal">—</span>
       </a>
       <a href="#" data-view="trends" onclick="switchView('trends')">
         <span class="icon">🎯</span> <span>Estrategia</span>
       </a>
       <a href="#" data-view="posts" onclick="switchView('posts')">
         <span class="icon">📋</span> <span>Posts</span>
+        <span class="badge-count" id="navPosts">—</span>
       </a>
     </nav>
     <div class="sidebar-footer">
-      <span class="dot"></span> Sistema activo<br>
-      RF Consultoría Integral
+      <span class="status-dot"></span>
+      <div class="status-text">
+        <strong>Athena 🦉</strong><br>
+        Sistema activo
+      </div>
     </div>
   </aside>
 
@@ -149,9 +214,9 @@
   <main class="main">
     <!-- Top Bar -->
     <div class="topbar">
-      <div>
+      <div class="topbar-left">
         <h1>Dashboard de Contenido</h1>
-        <div style="color:var(--text3);font-size:13px;margin-top:4px;" id="dateRange">Cargando...</div>
+        <div class="breadcrumb">Social Media Analytics · <span id="dateRange">Cargando...</span></div>
       </div>
       <div class="topbar-actions">
         <select class="select-filter" id="filterPlatform" onchange="renderAll()">
@@ -160,18 +225,18 @@
           <option value="Facebook">Facebook</option>
           <option value="LinkedIn">LinkedIn</option>
         </select>
-        <select class="select-filter" id="filterDays" onchange="renderAll()">
-          <option value="7">Últimos 7 días</option>
-          <option value="14">Últimos 14 días</option>
-          <option value="30" selected>Últimos 30 días</option>
-          <option value="60">Últimos 60 días</option>
+        <select class="select-filter" id="filterDays" onchange="loadData()">
+          <option value="7">7 días</option>
+          <option value="14">14 días</option>
+          <option value="30" selected>30 días</option>
+          <option value="60">60 días</option>
         </select>
-        <button class="btn btn-ghost" onclick="loadData()">⟳ Actualizar</button>
+        <button class="btn" onclick="loadData()">⟳ Actualizar</button>
       </div>
     </div>
 
     <div id="errorBox" class="error-state" style="display:none;"></div>
-    <div id="loadingBox" class="loading"><div class="spinner"></div><p style="margin-top:12px;">Cargando métricas...</p></div>
+    <div id="loadingBox" class="loading"><div class="spinner"></div><p style="margin-top:12px;">Cargando métricas desde Baserow...</p></div>
 
     <!-- View: Overview -->
     <div class="view active" id="view-overview">
@@ -191,17 +256,17 @@
       <div class="charts-row">
         <div class="chart-panel">
           <h3>🎯 Balance de Pilares vs Target</h3>
-          <div id="pilarBars" style="display:flex;flex-direction:column;gap:10px;padding:8px 0;"></div>
+          <div id="pilarBars" style="padding:8px 0;"></div>
         </div>
         <div class="chart-panel">
           <h3>⚠️ Gaps Estratégicos</h3>
-          <div id="strategicGaps" style="display:flex;flex-direction:column;gap:10px;padding:8px 0;"></div>
+          <div id="strategicGaps"></div>
         </div>
       </div>
       <div class="charts-row">
         <div class="chart-panel" style="grid-column:1/-1;">
           <h3>📅 Próximos 7 Días</h3>
-          <div id="nextWeek" style="overflow-x:auto;">
+          <div style="overflow-x:auto;">
             <table style="width:100%;">
               <thead><tr id="nextWeekHeader"></tr></thead>
               <tbody id="nextWeekBody"></tbody>
@@ -213,8 +278,8 @@
         <div class="chart-panel">
           <h3>🧬 Estrategias Aplicadas por Athena</h3>
           <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
-            <canvas id="chartStrategies" style="max-width:220px;max-height:220px;"></canvas>
-            <div id="strategyDetails" style="flex:1;min-width:250px;font-size:12px;"></div>
+            <canvas id="chartStrategies" style="max-width:200px;max-height:200px;"></canvas>
+            <div id="strategyDetails" style="flex:1;min-width:240px;font-size:12px;"></div>
           </div>
         </div>
         <div class="chart-panel">
@@ -229,7 +294,7 @@
       <div class="table-panel">
         <div class="table-panel-header">
           <h3>Posts Recientes</h3>
-          <span style="font-size:12px;color:var(--text3);" id="postCount"></span>
+          <span style="font-size:11px;color:var(--text3);" id="postCount"></span>
         </div>
         <div class="table-wrap">
           <table>
@@ -251,6 +316,10 @@
         </div>
       </div>
     </div>
+
+    <footer>
+      🦉 <strong>Athena Analytics</strong> · RF Consultoría Integral © 2026 · <strong>Strategic Luminance</strong>
+    </footer>
   </main>
 </div>
 
@@ -284,7 +353,7 @@ async function loadData() {
     if (STATE.data.error) throw new Error(STATE.data.error);
     document.getElementById('loadingBox').style.display = 'none';
     document.getElementById('dateRange').textContent = 
-      'Datos actualizados: ' + new Date(STATE.data.lastUpdated || Date.now()).toLocaleString('es-MX');
+      'Actualizado: ' + new Date(STATE.data.lastUpdated || Date.now()).toLocaleString('es-MX', {dateStyle:'medium',timeStyle:'short'});
     renderAll();
   } catch (err) {
     document.getElementById('loadingBox').style.display = 'none';
@@ -296,8 +365,7 @@ async function loadData() {
 function filterPosts() {
   if (!STATE.data?.recentPosts) return [];
   const plat = document.getElementById('filterPlatform').value;
-  if (plat === 'all') return STATE.data.recentPosts;
-  return STATE.data.recentPosts.filter(p => p.plataforma === plat);
+  return plat === 'all' ? STATE.data.recentPosts : STATE.data.recentPosts.filter(p => p.plataforma === plat);
 }
 
 function renderAll() {
@@ -309,40 +377,38 @@ function renderAll() {
 }
 
 function renderKPIs() {
-  const posts = filterPosts();
-  const total = STATE.data?.total || 0;
-  const platCounts = STATE.data?.platformCounts || {};
+  const data = STATE.data;
+  const pc = data?.platformCounts || {};
+  document.getElementById('navTotal').textContent = data?.total || '—';
+  document.getElementById('navPosts').textContent = (data?.recentPosts || []).length || '—';
   
-  const grid = document.getElementById('kpiGrid');
-  grid.innerHTML = `
+  document.getElementById('kpiGrid').innerHTML = `
     <div class="kpi-card total">
-      <div class="kpi-label">Total Posts</div>
-      <div class="kpi-value">${total}</div>
+      <div class="kpi-label">Total Posts Activos</div>
+      <div class="kpi-value">${data?.total || 0}</div>
       <div class="kpi-sub">en ${document.getElementById('filterDays').value} días</div>
     </div>
     <div class="kpi-card ig">
       <div class="kpi-label">📸 Instagram</div>
-      <div class="kpi-value">${platCounts.Instagram || 0}</div>
-      <div class="kpi-sub">Carruseles programados</div>
+      <div class="kpi-value">${pc.Instagram || 0}</div>
+      <div class="kpi-sub">Carruseles y contenido visual</div>
     </div>
     <div class="kpi-card fb">
       <div class="kpi-label">💬 Facebook</div>
-      <div class="kpi-value">${platCounts.Facebook || 0}</div>
+      <div class="kpi-value">${pc.Facebook || 0}</div>
       <div class="kpi-sub">Posts conversacionales</div>
     </div>
     <div class="kpi-card li">
       <div class="kpi-label">💼 LinkedIn</div>
-      <div class="kpi-value">${platCounts.LinkedIn || 0}</div>
-      <div class="kpi-sub">Posts ejecutivos</div>
-    </div>
-  `;
+      <div class="kpi-value">${pc.LinkedIn || 0}</div>
+      <div class="kpi-sub">Contenido ejecutivo</div>
+    </div>`;
 }
 
 function renderOverviewCharts() {
   const data = STATE.data;
   if (!data) return;
   
-  // Platform
   destroyChart('platform');
   const platKeys = ['Instagram', 'Facebook', 'LinkedIn'];
   const platVals = platKeys.map(k => data.platformCounts?.[k] || 0);
@@ -350,27 +416,11 @@ function renderOverviewCharts() {
   if (ctx1) {
     STATE.charts.platform = new Chart(ctx1, {
       type: 'bar',
-      data: {
-        labels: platKeys,
-        datasets: [{
-          data: platVals,
-          backgroundColor: ['#e1306c44','#1877f244','#0a66c244'],
-          borderColor: ['#e1306c','#1877f2','#0a66c2'],
-          borderWidth: 1.5, borderRadius: 8
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, ticks: { color: '#64748b' }, grid: { color: '#1e2d4a' } },
-          x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
-        }
-      }
+      data: { labels: platKeys, datasets: [{ data: platVals, backgroundColor: ['#e1306c33','#1877f233','#0a66c233'], borderColor: ['#e1306c','#1877f2','#0a66c2'], borderWidth: 1.5, borderRadius: 8 }] },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#556680' }, grid: { color: '#1a2d4a' } }, x: { ticks: { color: '#8899b4' }, grid: { display: false } } } }
     });
   }
 
-  // Pilar
   destroyChart('pilar');
   const pilKeys = Object.keys(data.pilarCounts || {});
   const pilVals = Object.values(data.pilarCounts || {});
@@ -379,19 +429,8 @@ function renderOverviewCharts() {
   if (ctx2) {
     STATE.charts.pilar = new Chart(ctx2, {
       type: 'doughnut',
-      data: {
-        labels: pilKeys,
-        datasets: [{
-          data: pilVals,
-          backgroundColor: pilVals.map((_,i) => pilColors[i%6]+'99'),
-          borderColor: pilVals.map((_,i) => pilColors[i%6]),
-          borderWidth: 1.5
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 14, font: { size: 11 } } } }
-      }
+      data: { labels: pilKeys, datasets: [{ data: pilVals, backgroundColor: pilVals.map((_,i)=>pilColors[i%6]+'99'), borderColor: pilVals.map((_,i)=>pilColors[i%6]), borderWidth: 1.5 }] },
+      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#8899b4', padding: 14, font: { size: 11 } } } } }
     });
   }
 }
@@ -402,204 +441,115 @@ function renderStrategy() {
   const pc = data.pilarCounts || {};
   const platC = data.platformCounts || {};
   const total = Object.values(pc).reduce((a,b)=>a+b,0) || 1;
-
-  // Target distribution
-  const targets = {
-    'Automatización': 27, 'Soporte Técnico': 27, 'IA': 18,
-    'Capacitación': 18, 'Transformación Digital': 10
-  };
-
-  // Pilar Balance Bars
+  const targets = { 'Automatización': 27, 'Soporte Técnico': 27, 'IA': 18, 'Capacitación': 18, 'Transformación Digital': 10 };
   const colors = { 'Automatización':'#3b82f6', 'Soporte Técnico':'#f59e0b', 'IA':'#a78bfa', 'Capacitación':'#34d399', 'Transformación Digital':'#f472b6' };
+  
   let barsHtml = '';
   const gaps = [];
-  
   Object.entries(targets).forEach(([pilar, targetPct]) => {
     const actual = pc[pilar] || 0;
     const actualPct = ((actual/total)*100);
     const diff = actualPct - targetPct;
     const status = diff < -3 ? '🔴' : diff < 0 ? '🟡' : '🟢';
     const barColor = colors[pilar] || '#64748b';
-    
     if (diff < -2) gaps.push({ pilar, actual, targetPct, actualPct: actualPct.toFixed(1), diff: diff.toFixed(1) });
-    
-    barsHtml += `
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="width:180px;font-size:12px;color:var(--text2);text-align:right;">${pilar}</span>
-        <div style="flex:1;background:#1e2d4a;border-radius:6px;height:20px;position:relative;overflow:hidden;">
-          <div style="height:100%;background:${barColor};width:${Math.min(actualPct,100)}%;border-radius:6px;transition:width .5s;"></div>
-          <div style="position:absolute;top:0;bottom:0;left:${targetPct}%;width:2px;background:#fff;opacity:.5;" title="Target: ${targetPct}%"></div>
-        </div>
-        <span style="font-size:12px;width:70px;color:var(--text2);">${actualPct.toFixed(0)}%</span>
-        <span style="font-size:11px;width:45px;">${status} ${diff>0?'+':''}${diff.toFixed(0)}%</span>
-      </div>`;
+    barsHtml += `<div class="pilar-bar">
+      <span class="pilar-name">${pilar}</span>
+      <div class="bar-track"><div class="bar-fill" style="background:${barColor};width:${Math.min(actualPct,100)}%"></div><div class="bar-target" style="left:${targetPct}%"></div></div>
+      <span class="bar-pct">${actualPct.toFixed(0)}%</span>
+      <span class="bar-diff">${status} ${diff>0?'+':''}${diff.toFixed(0)}%</span>
+    </div>`;
   });
   document.getElementById('pilarBars').innerHTML = barsHtml;
 
-  // Strategic Gaps
   let gapsHtml = '';
   if (gaps.length === 0) {
-    gapsHtml = '<p style="color:var(--green);font-size:13px;">✅ Todos los pilares están dentro del rango objetivo. ¡Buen balance!</p>';
+    gapsHtml = '<p style="color:var(--green);font-size:12px;padding:16px;">✅ Todos los pilares dentro del rango objetivo</p>';
   } else {
     gaps.forEach(g => {
-      const needed = Math.ceil((g.targetPct * total / 100) - g.actual);
-      gapsHtml += `
-        <div style="background:#1a0f0f;border:1px solid #3b1111;border-radius:8px;padding:12px;">
-          <span style="font-weight:700;font-size:13px;">🔴 ${g.pilar}</span>
-          <span style="font-size:12px;color:var(--text2);margin-left:8px;">${g.actualPct}% actual vs ${g.targetPct}% objetivo (${g.diff}%)</span>
-          <div style="font-size:12px;color:var(--teal-light);margin-top:4px;">→ Crear <b>${needed} post${needed!==1?'s':''}</b> de ${g.pilar}</div>
-        </div>`;
+      const needed = Math.max(1, Math.ceil((g.targetPct * total / 100) - g.actual));
+      gapsHtml += `<div class="gap-item">
+        <div class="gap-title">🔴 ${g.pilar}</div>
+        <div class="gap-desc">${g.actualPct}% actual vs ${g.targetPct}% objetivo (${g.diff}%)</div>
+        <div class="gap-action">→ Crear <b>${needed} post${needed!==1?'s':''}</b> de ${g.pilar}</div>
+      </div>`;
     });
   }
-  
-  // Platform distribution insight
   const igPct = ((platC.Instagram||0)/total*100).toFixed(0);
   const fbPct = ((platC.Facebook||0)/total*100).toFixed(0);
   const liPct = ((platC.LinkedIn||0)/total*100).toFixed(0);
-  
-  gapsHtml += `
-    <div style="background:#0a1a2b;border:1px solid var(--border);border-radius:8px;padding:12px;">
-      <span style="font-weight:700;font-size:13px;color:var(--teal-light);">📱 Distribución de Plataformas</span>
-      <div style="font-size:12px;color:var(--text2);margin-top:6px;">
-        Instagram ${igPct}% · Facebook ${fbPct}% · LinkedIn ${liPct}%
-      </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px;">
-        ${parseInt(liPct) < 25 ? '→ LinkedIn bajo. Priorizar contenido ejecutivo.' : ''}
-        ${parseInt(fbPct) < 20 ? '→ Facebook bajo. Reforzar posts conversacionales.' : ''}
-        ${parseInt(igPct) > 40 ? '→ Instagram alto. Redistribuir 1 post a otra plataforma.' : ''}
-      </div>
-    </div>`;
-  
+  gapsHtml += `<div class="insight-item">
+    <div class="insight-title">📱 Distribución de Plataformas</div>
+    <div class="insight-body">Instagram ${igPct}% · Facebook ${fbPct}% · LinkedIn ${liPct}%</div>
+    <div class="insight-hint">${parseInt(liPct)<25?'→ LinkedIn bajo. Priorizar contenido ejecutivo. ':''}${parseInt(fbPct)<20?'→ Facebook bajo. Reforzar posts conversacionales. ':''}${parseInt(igPct)>40?'→ Instagram alto. Redistribuir. ':''}</div>
+  </div>`;
   document.getElementById('strategicGaps').innerHTML = gapsHtml;
 
-  // Next 7 Days Calendar
-  const posts = data.recentPosts || [];
-  const today = new Date(); today.setHours(0,0,0,0);
-  const next7 = new Date(today); next7.setDate(next7.getDate()+7);
-  
-  const upcoming = posts.filter(p => {
-    if (!p.fecha) return false;
-    const d = new Date(p.fecha + 'T12:00:00');
-    return d >= today && d <= next7;
-  }).sort((a,b) => (a.fecha||'').localeCompare(b.fecha||''));
-  
-  // Generate days
-  const days = [];
-  for (let i=0; i<7; i++) {
-    const d = new Date(today); d.setDate(d.getDate()+i);
-    const dateStr = d.toISOString().slice(0,10);
-    const dayPosts = upcoming.filter(p => p.fecha === dateStr);
-    const dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-    days.push({
-      label: `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`,
-      date: dateStr,
-      posts: dayPosts
-    });
-  }
-  
-  // Strategy Usage Charts
-  const strategyNames = {
-    '9a': 'Viaje del Héroe', '9b': 'Contraste de Precios', '9c': 'CTA 1-Palabra',
-    '9d': 'Tutorial Visual', '9e': 'Multiagente', '9f': 'CTAs Densos'
-  };
+  // Strategy charts
+  const strategyNames = { '9a':'Viaje del Héroe', '9b':'Contraste Precios', '9c':'CTA 1-Palabra', '9d':'Tutorial Visual', '9e':'Multiagente', '9f':'CTAs Densos' };
   const strategyIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
   const sc = data.strategyCounts || {};
   
-  // Donut chart
   destroyChart('strategies');
   const ctxS = document.getElementById('chartStrategies');
-  if (ctxS) {
-    const sKeys = Object.keys(sc);
-    const sVals = Object.values(sc);
+  if (ctxS && Object.keys(sc).length > 0) {
+    const sKeys = Object.keys(sc), sVals = Object.values(sc);
     STATE.charts.strategies = new Chart(ctxS, {
       type: 'doughnut',
-      data: {
-        labels: sKeys.map(k => strategyNames[k] || k),
-        datasets: [{
-          data: sVals,
-          backgroundColor: ['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'],
-          borderColor: '#111827', borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
-      }
+      data: { labels: sKeys.map(k=>strategyNames[k]||k), datasets: [{ data: sVals, backgroundColor: ['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'], borderColor: '#0d1525', borderWidth: 2 }] },
+      options: { responsive: true, plugins: { legend: { display: false } } }
     });
   }
   
-  // Details
   const totalStrat = Object.values(sc).reduce((a,b)=>a+b,0) || 1;
   let stratHtml = '';
   Object.entries(strategyNames).forEach(([k, name]) => {
     const count = sc[k] || 0;
     const pct = ((count/totalStrat)*100).toFixed(0);
     const color = count > 0 ? '#2dd4bf' : '#374151';
-    stratHtml += `
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <span>${strategyIcons[k]}</span>
-        <span style="color:${color};font-weight:600;width:130px;">${name}</span>
-        <span style="color:var(--text2);width:35px;">${count}</span>
-        <span style="color:var(--text3);font-size:11px;">${pct}%</span>
-      </div>`;
+    stratHtml += `<div class="strat-item"><span>${strategyIcons[k]}</span><span class="strat-name">${name}</span><span class="strat-count">${count}</span><span class="strat-pct">${pct}%</span></div>`;
   });
-  
-  // Missing strategies
-  const missing = Object.entries(strategyNames).filter(([k]) => !sc[k]);
-  if (missing.length > 0) {
-    stratHtml += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
-      <span style="color:var(--amber);font-size:11px;">⚠️ Estrategias sin aplicar:</span>
-      <span style="color:var(--text3);font-size:11px;">${missing.map(([k,n])=>strategyIcons[k]+' '+n).join(' · ')}</span>
-    </div>`;
-  }
+  const missing = Object.entries(strategyNames).filter(([k])=>!sc[k]);
+  if (missing.length) stratHtml += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;"><span style="color:var(--amber);">⚠️ Sin aplicar: </span><span style="color:var(--text3);">${missing.map(([k,n])=>strategyIcons[k]+' '+n).join(' · ')}</span></div>`;
   document.getElementById('strategyDetails').innerHTML = stratHtml;
 
-  // Weekly Evolution
   destroyChart('strategyEvo');
   const sw = data.strategyByWeek || {};
   const weeksSorted = Object.keys(sw).sort().slice(-6);
   const ctxE = document.getElementById('chartStrategyEvo');
   if (ctxE && weeksSorted.length > 0) {
     const datasets = Object.entries(strategyNames).map(([k, name], i) => ({
-      label: name,
-      data: weeksSorted.map(w => sw[w]?.[k] || 0),
+      label: name, data: weeksSorted.map(w => sw[w]?.[k] || 0),
       borderColor: ['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],
-      backgroundColor: 'transparent',
-      tension: 0.3, borderWidth: 2, pointRadius: 3
+      backgroundColor: 'transparent', tension: 0.3, borderWidth: 2, pointRadius: 3
     }));
     STATE.charts.strategyEvo = new Chart(ctxE, {
-      type: 'line',
-      data: { labels: weeksSorted, datasets },
-      options: {
-        responsive: true,
-        plugins: { legend: { labels: { color: '#94a3b8', padding: 8, font: { size: 10 }, boxWidth: 12 } } },
-        scales: {
-          y: { beginAtZero: true, ticks: { color: '#64748b', stepSize: 1 }, grid: { color: '#1e2d4a' } },
-          x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
-        }
-      }
+      type: 'line', data: { labels: weeksSorted, datasets },
+      options: { responsive: true, plugins: { legend: { labels: { color: '#8899b4', padding: 8, font: { size: 10 }, boxWidth: 12 } } }, scales: { y: { beginAtZero: true, ticks: { color: '#556680', stepSize: 1 }, grid: { color: '#1a2d4a' } }, x: { ticks: { color: '#8899b4' }, grid: { display: false } } } }
     });
   }
 
-  document.getElementById('nextWeekHeader').innerHTML = days.map(d => 
-    `<th style="text-align:center;">${d.label}</th>`
-  ).join('');
-  
-  document.getElementById('nextWeekBody').innerHTML = `
-    <tr>
-      ${days.map(d => {
-        if (d.posts.length === 0) return `<td style="text-align:center;color:var(--text3);padding:20px 8px;">—</td>`;
-        return `<td style="padding:8px;vertical-align:top;">
-          ${d.posts.map(p => `
-            <div style="background:var(--surface2);border-radius:6px;padding:8px;margin-bottom:4px;font-size:11px;">
-              <div style="margin-bottom:3px;">${badge(p.plataforma)}</div>
-              <div style="color:var(--text2);">${(p.titulo||'').slice(0,40)}${(p.titulo||'').length>40?'…':''}</div>
-              <div style="color:var(--text3);margin-top:2px;">${p.pilar} · ${p.horario||''}</div>
-            </div>
-          `).join('')}
-        </td>`;
-      }).join('')}
-    </tr>`;
+  // Calendar
+  const posts = data.recentPosts || [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const next7 = new Date(today); next7.setDate(next7.getDate()+7);
+  const upcoming = posts.filter(p => { if(!p.fecha) return false; const d=new Date(p.fecha+'T12:00:00'); return d>=today && d<=next7; }).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const days = [], dayNames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  for (let i=0; i<7; i++) {
+    const d = new Date(today); d.setDate(d.getDate()+i);
+    const ds = d.toISOString().slice(0,10);
+    days.push({ label: `${dayNames[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`, date: ds, posts: upcoming.filter(p=>p.fecha===ds) });
+  }
+  document.getElementById('nextWeekHeader').innerHTML = days.map(d => `<th style="text-align:center;min-width:110px;">${d.label}</th>`).join('');
+  document.getElementById('nextWeekBody').innerHTML = `<tr>${days.map(d => {
+    if (d.posts.length === 0) return `<td style="text-align:center;color:var(--text3);padding:16px 8px;">—</td>`;
+    return `<td class="cal-cell">${d.posts.map(p => `
+      <div class="cal-post">
+        <div class="cal-platform">${badge(p.plataforma)}</div>
+        <div class="cal-title">${(p.titulo||'').slice(0,35)}${(p.titulo||'').length>35?'…':''}</div>
+        <div class="cal-meta">${p.pilar} · ${p.horario||''}</div>
+      </div>`).join('')}</td>`;
+  }).join('')}</tr>`;
 }
 
 function renderPostsTable() {
@@ -617,66 +567,35 @@ function renderPostsTable() {
       <td style="white-space:nowrap;color:var(--text3);">${p.horario||'—'}</td>
       <td>${p.likes != null ? p.likes : '<span class="metric-null">—</span>'}</td>
       <td>${p.comentarios != null ? p.comentarios : '<span class="metric-null">—</span>'}</td>
-    </tr>
-  `).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:32px;">No hay posts en este período</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:32px;">No hay posts en este período</td></tr>';
 }
 
 function renderRecommendations() {
   const data = STATE.data;
   const pc = data?.pilarCounts || {};
-  const pkeys = Object.keys(pc);
-  const pvals = Object.values(pkeys.map(k => pc[k]));
-  const total = pvals.reduce((a,b)=>a+b,0);
-  
+  const total = Object.values(pc).reduce((a,b)=>a+b,0);
   const recos = [];
   
-  if (pkeys.length > 0) {
-    const min = Math.min(...pvals);
-    const minPilar = pkeys[pvals.indexOf(min)];
-    const pct = ((min/total)*100).toFixed(0);
-    recos.push({
-      title: '⚖️ Balance de Pilares',
-      body: `El pilar "${minPilar}" tiene solo ${min} posts (${pct}%). Recomiendo crear 1-2 posts de ${minPilar} esta semana para balancear.`
-    });
+  if (Object.keys(pc).length > 0) {
+    const targets = { 'Automatización': 27, 'Soporte Técnico': 27, 'IA': 18, 'Capacitación': 18, 'Transformación Digital': 10 };
+    const worst = Object.entries(targets).reduce((a,[k,v]) => { const pct = ((pc[k]||0)/total*100); return pct-v < a.diff ? {pilar:k,diff:pct-v} : a; }, {pilar:'',diff:0});
+    if (worst.diff < -2) recos.push({ title: '⚖️ Balance de Pilares', body: `"${worst.pilar}" está ${Math.abs(worst.diff).toFixed(0)}% bajo el target. Prioriza contenido de este pilar esta semana.` });
   }
+
+  const platC = data?.platformCounts || {};
+  if ((platC.Instagram||0) > (platC.LinkedIn||0) + 5) recos.push({ title: '📱 Saturación Instagram', body: 'Hay muchos más posts en Instagram que LinkedIn. LinkedIn tiene mejor engagement B2B. Considera redistribuir.' });
   
-  const platCounts = data?.platformCounts || {};
-  if (platCounts.Instagram > platCounts.LinkedIn + 2) {
-    recos.push({
-      title: '📱 Saturación Instagram',
-      body: 'Hay más posts en Instagram que en LinkedIn. LinkedIn tiene mejor engagement B2B. Sugiero redistribuir 1 post semanal de IG a LinkedIn.'
-    });
-  }
+  const sc = data?.strategyCounts || {};
+  if (!sc['9f']) recos.push({ title: '📊 CTAs Densos sin usar', body: 'La estrategia 9f (múltiples CTAs en carruseles) no se ha aplicado. Úsala en el próximo carrusel de 6+ slides.' });
+  if (!sc['9c'] || sc['9c'] < 5) recos.push({ title: '🎯 Aumenta CTAs 1-Palabra', body: 'Los posts con keyword (OPUS, AGENTE) disparan el funnel Aria → DM. Usa CTAs de 1 palabra en más posts.' });
+  
+  recos.push({ title: '🌐 Tráfico Web (Regla 3b)', body: 'Recuerda: al menos 1 de cada 5 posts debe tener CTA a rfconsultoriaintegral.com.mx con oferta de diagnóstico gratuito.' });
+  recos.push({ title: '🔗 Automatización + Capacitación', body: 'Cada post de automatización debe mencionar la importancia de capacitar al equipo. Son dos caras de la misma moneda.' });
+  recos.push({ title: '🎬 Tutorial Visual (Regla 9d)', body: 'Los carruseles tutoriales funcionan bien en Instagram. Mantén al menos 1 por semana con pilar IA o Automatización.' });
 
-  recos.push({
-    title: '🦊 CTA de 1 Palabra',
-    body: 'Los posts con keyword (OPUS, AGENTE) en Drive GUIAS/ disparan el funnel automático Aria → DM. Asegura que 1 de cada 3 posts tenga CTA de 1 palabra.'
-  });
-
-  recos.push({
-    title: '🌐 Tráfico Web',
-    body: 'Recuerda la regla 3b: al menos 1 de cada 5 posts debe tener CTA directo a rfconsultoriaintegral.com.mx con oferta de diagnóstico gratuito.'
-  });
-
-  recos.push({
-    title: '🔗 Automatización + Capacitación',
-    body: 'Cada post de automatización debe mencionar la importancia de capacitar al equipo. Son las dos caras de la misma moneda.'
-  });
-
-  recos.push({
-    title: '📊 Carruseles Tutoriales',
-    body: 'El formato Tutorial Visual (regla 9d) está funcionando bien en Instagram. Mantén al menos 1 carrusel tutorial por semana con pilar IA o Automatización.'
-  });
-
-  document.getElementById('recoGrid').innerHTML = recos.map(r => `
-    <div class="reco-item">
-      <div class="reco-title">${r.title}</div>
-      <div class="reco-body">${r.body}</div>
-    </div>
-  `).join('');
+  document.getElementById('recoGrid').innerHTML = recos.map(r => `<div class="reco-item"><div class="reco-title">${r.title}</div><div class="reco-body">${r.body}</div></div>`).join('');
 }
 
-// Init
 loadData();
 </script>
 </body>
