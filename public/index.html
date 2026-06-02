@@ -9,195 +9,228 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg-primary: #0f172a;
-      --bg-secondary: #0b1222;
-      --bg-card: #131d30;
-      --bg-card-hover: #18273e;
-      --bg-elevated: #172033;
-      --border: #1e293b;
-      --border-light: #253349;
-      --accent: #0d9488;
-      --accent-light: #14b8a6;
-      --accent-glow: rgba(13, 148, 136, 0.12);
-      --accent-soft: rgba(13, 148, 136, 0.06);
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5e1;
-      --text-muted: #64748b;
-      --text-dim: #475569;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --ig: #e1306c;
-      --fb: #1877f2;
-      --li: #0a66c2;
+      /* Primitives — Financial Dashboard + Productivity Tool palette */
+      --slate-900: #0f172a; --slate-800: #1e293b; --slate-700: #334155; --slate-600: #475569; --slate-500: #64748b; --slate-400: #94a3b8; --slate-300: #cbd5e1; --slate-200: #e2e8f0; --slate-100: #f1f5f9; --slate-50: #f8fafc;
+      --teal-600: #0d9488; --teal-500: #14b8a6; --teal-400: #2dd4bf; --teal-300: #5eead4; --teal-100: #ccfbf1; --teal-50: #f0fdfa;
+      --green-500: #22c55e; --amber-500: #f59e0b; --red-500: #ef4444; --blue-500: #3b82f6; --purple-400: #a78bfa; --pink-400: #f472b6; --emerald-400: #34d399;
+      
+      /* Semantic tokens */
+      --color-bg: var(--slate-900);
+      --color-surface: #111827;
+      --color-surface-raised: #1a2332;
+      --color-surface-overlay: #1f2a3d;
+      --color-border: var(--slate-800);
+      --color-border-light: #253349;
+      --color-accent: var(--teal-600);
+      --color-accent-light: var(--teal-500);
+      --color-accent-soft: rgba(13,148,136,.08);
+      --color-accent-glow: rgba(13,148,136,.14);
+      --color-text: var(--slate-50);
+      --color-text-secondary: var(--slate-300);
+      --color-text-muted: var(--slate-500);
+      --color-text-dim: var(--slate-600);
+      --color-success: var(--green-500);
+      --color-warning: var(--amber-500);
+      --color-danger: var(--red-500);
+      
+      /* Platform colors */
+      --ig: #e1306c; --fb: #1877f2; --li: #0a66c2;
+      
+      /* Spacing scale (8px grid) */
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      
+      /* Radii */
+      --radius-sm: 6px; --radius: 8px; --radius-lg: 12px; --radius-xl: 16px;
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
+      --shadow: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+      --shadow-lg: 0 4px 6px rgba(0,0,0,.3), 0 2px 4px rgba(0,0,0,.2);
+      --shadow-xl: 0 10px 15px rgba(0,0,0,.4), 0 4px 6px rgba(0,0,0,.2);
+      
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --text-xs: 0.75rem; --text-sm: 0.8125rem; --text-base: 0.875rem; --text-lg: 1rem; --text-xl: 1.125rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem; --text-4xl: 2.25rem;
+      --font-normal: 400; --font-medium: 500; --font-semibold: 600; --font-bold: 700; --font-extrabold: 800;
+      
+      /* Transitions */
+      --transition-fast: 150ms ease; --transition: 200ms ease; --transition-slow: 300ms ease;
     }
+
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-secondary); min-height: 100vh; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text-secondary); min-height: 100vh; line-height: 1.6; -webkit-font-smoothing: antialiased; font-size: var(--text-base); }
     
-    /* Accessibility: Skip link */
-    .skip-link { position: absolute; top: -100px; left: 16px; background: var(--accent); color: #fff; padding: 8px 16px; border-radius: 6px; z-index: 100; font-weight: 600; font-size: 13px; text-decoration: none; transition: top .2s; }
-    .skip-link:focus { top: 16px; }
-    
-    /* Focus visible */
-    :focus-visible { outline: 2px solid var(--accent-light); outline-offset: 2px; border-radius: 4px; }
-    
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-      .spinner { animation: none !important; opacity: .5; }
-    }
+    /* Accessibility */
+    .skip-link { position: absolute; top: -100px; left: var(--space-4); background: var(--color-accent); color: #fff; padding: var(--space-2) var(--space-4); border-radius: var(--radius); z-index: 100; font-weight: var(--font-semibold); font-size: var(--text-sm); text-decoration: none; transition: top var(--transition); }
+    .skip-link:focus { top: var(--space-4); }
+    :focus-visible { outline: 2px solid var(--color-accent-light); outline-offset: 2px; border-radius: var(--radius-sm); }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } .spinner { animation: none !important; opacity: .5; } }
     
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--slate-700); border-radius: 3px; }
     
     .layout { display: flex; min-height: 100vh; }
     
-    /* ---- SIDEBAR ---- */
-    .sidebar { width: 256px; background: var(--bg-secondary); border-right: 1px solid var(--border); position: fixed; top:0; left:0; bottom:0; z-index:20; display:flex; flex-direction:column; }
-    .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
-    .sidebar-brand .brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .sidebar-brand .brand-logo { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent), #1a6678); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 16px; letter-spacing: -0.5px; }
-    .sidebar-brand .brand-name { font-size: 19px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px; }
-    .sidebar-brand .brand-name span { color: var(--accent-light); }
-    .sidebar-brand .brand-tag { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
-    .sidebar nav { flex:1; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
-    .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: all .15s; }
-    .sidebar nav a:hover { background: var(--bg-card); color: var(--text-secondary); }
-    .sidebar nav a.active { background: var(--accent-soft); color: var(--accent-light); border: 1px solid var(--accent-glow); }
-    .sidebar nav a .icon { font-size: 15px; width: 20px; text-align: center; }
-    .sidebar nav a .count { margin-left: auto; background: var(--bg-card); color: var(--text-muted); font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 600; min-width: 24px; text-align: center; }
-    .sidebar nav a.active .count { background: var(--accent-glow); color: var(--accent-light); }
-    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-    .sidebar-footer .dot { width: 7px; height: 7px; background: var(--success); border-radius: 50%; box-shadow: 0 0 6px var(--success); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    /* ── SIDEBAR ── */
+    .sidebar { width: 260px; background: var(--color-surface); border-right: 1px solid var(--color-border); position: fixed; top:0; left:0; bottom:0; z-index:20; display:flex; flex-direction:column; }
+    .sidebar-brand { padding: var(--space-6) var(--space-5) var(--space-5); border-bottom: 1px solid var(--color-border); }
+    .sidebar-brand .brand-row { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-2); }
+    .sidebar-brand .brand-logo { width: 42px; height: 42px; background: linear-gradient(135deg, var(--teal-600), var(--slate-900)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: var(--font-extrabold); font-size: 18px; letter-spacing: -0.5px; box-shadow: 0 4px 12px var(--color-accent-glow); }
+    .sidebar-brand .brand-name { font-size: var(--text-xl); font-weight: var(--font-extrabold); color: var(--color-text); letter-spacing: -0.3px; }
+    .sidebar-brand .brand-name span { color: var(--color-accent-light); }
+    .sidebar-brand .brand-tag { font-size: 10px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: var(--font-semibold); }
+    .sidebar nav { flex:1; padding: var(--space-3); display: flex; flex-direction: column; gap: 2px; }
+    .sidebar nav a { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius); color: var(--color-text-muted); text-decoration: none; font-size: var(--text-sm); font-weight: var(--font-medium); transition: all var(--transition-fast); min-height: 44px; }
+    .sidebar nav a:hover { background: var(--color-surface-raised); color: var(--color-text-secondary); }
+    .sidebar nav a.active { background: var(--color-accent-soft); color: var(--color-accent-light); border: 1px solid var(--color-accent-glow); }
+    .sidebar nav a .icon { font-size: 16px; width: 22px; text-align: center; }
+    .sidebar nav a .count { margin-left: auto; background: var(--color-surface-raised); color: var(--color-text-muted); font-size: 10px; padding: 2px 8px; border-radius: var(--radius-xl); font-weight: var(--font-semibold); min-width: 24px; text-align: center; }
+    .sidebar nav a.active .count { background: var(--color-accent-glow); color: var(--color-accent-light); }
+    .sidebar-footer { padding: var(--space-4) var(--space-5); border-top: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--space-3); }
+    .sidebar-footer .dot { width: 8px; height: 8px; background: var(--color-success); border-radius: 50%; box-shadow: 0 0 8px var(--color-success); animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
     .sidebar-footer div { font-size: 11px; }
-    .sidebar-footer strong { color: var(--text-secondary); font-weight: 600; }
-    .sidebar-footer span { color: var(--text-dim); }
+    .sidebar-footer strong { color: var(--color-text-secondary); font-weight: var(--font-semibold); }
+    .sidebar-footer span { color: var(--color-text-dim); }
 
-    /* ---- MAIN ---- */
-    .main { margin-left: 256px; flex: 1; padding: 32px 40px; max-width: 1440px; }
+    /* ── MAIN ── */
+    .main { margin-left: 260px; flex: 1; padding: var(--space-8) var(--space-10); max-width: 1440px; }
     
-    /* ---- TOPBAR ---- */
-    .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 36px; flex-wrap: wrap; gap: 16px; }
-    .topbar h1 { font-size: 28px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; }
-    .topbar .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
-    .topbar .subtitle strong { color: var(--accent-light); font-weight: 600; }
-    .topbar-actions { display: flex; gap: 8px; align-items: center; }
-    .btn { padding: 9px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all .15s; background: var(--bg-card); color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px; }
-    .btn:hover { background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border-light); }
-    .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn-accent:hover { background: #268596; }
-    .select-filter { padding: 9px 12px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); font-size: 12px; cursor: pointer; font-weight: 500; }
-    .select-filter:focus { outline: none; border-color: var(--accent); }
+    /* ── TOPBAR ── */
+    .topbar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 36px; flex-wrap: wrap; gap: var(--space-4); }
+    .topbar h1 { font-size: var(--text-3xl); font-weight: var(--font-extrabold); color: var(--color-text); letter-spacing: -0.5px; }
+    .topbar .subtitle { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-1); }
+    .topbar .subtitle strong { color: var(--color-accent-light); font-weight: var(--font-semibold); }
+    .topbar-actions { display: flex; gap: var(--space-2); align-items: center; }
+    
+    /* ── BUTTONS (Design System spec) ── */
+    .btn { height: 40px; padding: 0 var(--space-4); border-radius: var(--radius); font-size: var(--text-sm); font-weight: var(--font-semibold); cursor: pointer; border: 1px solid var(--color-border); transition: all var(--transition-fast); background: var(--color-surface-raised); color: var(--color-text-muted); display: inline-flex; align-items: center; gap: var(--space-2); }
+    .btn:hover { background: var(--color-surface-overlay); color: var(--color-text-secondary); border-color: var(--color-border-light); }
+    .btn:active { transform: scale(.98); }
+    .btn-accent { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+    .btn-accent:hover { background: #0f766e; border-color: #0f766e; }
+    .select-filter { height: 40px; padding: 0 var(--space-3); border-radius: var(--radius); background: var(--color-surface-raised); border: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: var(--font-medium); cursor: pointer; transition: border-color var(--transition-fast); }
+    .select-filter:hover { border-color: var(--color-border-light); }
+    .select-filter:focus { outline: none; border-color: var(--color-accent); }
 
-    /* ---- KPI CARDS ---- */
-    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
-    .kpi-card { background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary)); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; position: relative; overflow: hidden; transition: all .2s; }
-    .kpi-card:hover { border-color: var(--border-light); transform: translateY(-1px); }
-    .kpi-card .kpi-icon { font-size: 24px; margin-bottom: 12px; }
-    .kpi-card .kpi-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 6px; }
-    .kpi-card .kpi-value { font-size: 40px; font-weight: 800; color: var(--text-primary); letter-spacing: -1.5px; line-height: 1; }
-    .kpi-card .kpi-sub { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
-    .kpi-card::after { content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px; border-radius: 0 0 0 80px; opacity: .03; }
-    .kpi-card.ig::after { background: var(--ig); }
-    .kpi-card.fb::after { background: var(--fb); }
-    .kpi-card.li::after { background: var(--li); }
-    .kpi-card.total::after { background: var(--accent); }
+    /* ── KPI CARDS (Card system: interactive variant) ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); margin-bottom: var(--space-6); }
+    .kpi-card { background: linear-gradient(180deg, var(--color-surface-raised), var(--color-surface)); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); position: relative; overflow: hidden; transition: all var(--transition); cursor: default; }
+    .kpi-card:hover { border-color: var(--color-border-light); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .kpi-card .accent-line { position: absolute; top:0; left:var(--space-4); right:var(--space-4); height: 3px; border-radius: 0 0 3px 3px; }
+    .kpi-card .kpi-icon { font-size: 26px; margin-bottom: var(--space-3); opacity: .9; }
+    .kpi-card .kpi-label { font-size: 10px; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: var(--font-bold); margin-bottom: var(--space-2); }
+    .kpi-card .kpi-value { font-size: 42px; font-weight: var(--font-extrabold); color: var(--color-text); letter-spacing: -2px; line-height: 1; }
+    .kpi-card .kpi-sub { font-size: 11px; color: var(--color-text-dim); margin-top: var(--space-2); }
+    .kpi-card .kpi-glow { position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; border-radius: 50%; opacity: .04; pointer-events: none; }
 
-    /* ---- PANELS ---- */
-    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-    .panel { background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary)); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
-    .panel h3 { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .panel h3::before { content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
+    /* ── PANELS (Card system: elevated variant) ── */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-5); }
+    .panel { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-sm); }
+    .panel-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-5); }
+    .panel-header .dot-accent { width: 4px; height: 16px; background: var(--color-accent); border-radius: 2px; }
+    .panel-header h3 { font-size: 11px; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: var(--font-bold); }
     .panel canvas { max-height: 280px; }
 
-    /* ---- PILAR BARS ---- */
-    .pilar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .pilar-row .pilar-name { width: 160px; font-size: 12px; color: var(--text-muted); text-align: right; font-weight: 500; }
-    .pilar-row .bar-track { flex:1; background: var(--bg-primary); border-radius: 6px; height: 24px; position: relative; overflow: hidden; border: 1px solid var(--border); }
-    .pilar-row .bar-fill { height: 100%; border-radius: 5px; transition: width .6s ease; opacity: .8; }
-    .pilar-row .bar-marker { position: absolute; top:0; bottom:0; width: 2px; background: var(--accent); opacity: .5; }
-    .pilar-row .bar-val { font-size: 12px; font-weight: 600; width: 40px; text-align: right; color: var(--text-secondary); }
-    .pilar-row .bar-diff { font-size: 11px; width: 60px; font-weight: 500; }
-
-    /* ---- TABLE ---- */
-    .table-panel { background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary)); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
-    .table-panel-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .table-panel-header h3 { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+    /* ── TABLE (Card system: default variant) ── */
+    .table-panel { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: var(--space-6); box-shadow: var(--shadow-sm); }
+    .table-panel-header { padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
+    .table-panel-header h3 { font-size: 11px; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: var(--font-bold); }
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .8px; white-space: nowrap; }
-    td { padding: 10px 16px; border-bottom: 1px solid var(--bg-primary); }
-    tr:hover td { background: var(--bg-elevated); }
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: .3px; }
-    .badge-ig { background: #e1306c18; color: #f472b6; }
-    .badge-fb { background: #1877f218; color: #60a5fa; }
-    .badge-li { background: #0a66c218; color: #38bdf8; }
-    .text-dim { color: var(--text-dim); font-style: italic; opacity: .6; }
+    table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+    th { text-align: left; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-border); color: var(--color-text-dim); font-weight: var(--font-bold); font-size: 10px; text-transform: uppercase; letter-spacing: .8px; white-space: nowrap; }
+    td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-bg); color: var(--color-text-secondary); }
+    tr { transition: background var(--transition-fast); }
+    tr:hover td { background: var(--color-surface-raised); }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: var(--radius-sm); font-size: 10px; font-weight: var(--font-bold); letter-spacing: .3px; }
+    .badge-ig { background: #e1306c15; color: #f472b6; border: 1px solid #e1306c25; }
+    .badge-fb { background: #1877f215; color: #60a5fa; border: 1px solid #1877f225; }
+    .badge-li { background: #0a66c215; color: #38bdf8; border: 1px solid #0a66c225; }
+    .text-dim { color: var(--color-text-dim); font-style: italic; opacity: .6; }
 
-    /* ---- STRATEGY CARDS ---- */
-    .strat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
-    .strat-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
-    .strat-card .strat-icon { font-size: 22px; margin-bottom: 6px; }
-    .strat-card .strat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-    .strat-card .strat-count { font-size: 22px; font-weight: 800; color: var(--text-primary); margin: 4px 0; }
-    .strat-card .strat-pct { font-size: 10px; color: var(--text-dim); }
-    .strat-card.highlight { border-color: var(--accent); background: var(--accent-soft); }
+    /* ── PILAR BARS ── */
+    .pilar-row { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+    .pilar-row .pilar-name { width: 160px; font-size: var(--text-sm); color: var(--color-text-muted); text-align: right; font-weight: var(--font-medium); }
+    .pilar-row .bar-wrap { flex:1; background: var(--color-bg); border-radius: var(--radius-sm); height: 26px; position: relative; overflow: hidden; border: 1px solid var(--color-border); }
+    .pilar-row .bar-fill { height: 100%; border-radius: 5px; transition: width .6s ease; }
+    .pilar-row .bar-marker { position: absolute; top:0; bottom:0; width: 2px; background: var(--color-accent); opacity: .6; }
+    .pilar-row .bar-val { font-size: var(--text-sm); font-weight: var(--font-semibold); width: 40px; text-align: right; color: var(--color-text-secondary); }
+    .pilar-row .bar-diff { font-size: 11px; width: 60px; font-weight: var(--font-medium); }
 
-    /* ---- GAPS ---- */
-    .gap-item { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 8px; }
+    /* ── STRATEGY GRID ── */
+    .strat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: var(--space-2); }
+    .strat-card { background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); text-align: center; transition: all var(--transition-fast); }
+    .strat-card:hover { border-color: var(--color-border-light); transform: translateY(-1px); }
+    .strat-card .strat-icon { font-size: 24px; margin-bottom: var(--space-2); }
+    .strat-card .strat-label { font-size: 11px; color: var(--color-text-muted); font-weight: var(--font-medium); }
+    .strat-card .strat-value { font-size: 26px; font-weight: var(--font-extrabold); color: var(--color-text); margin: var(--space-1) 0; letter-spacing: -1px; }
+    .strat-card .strat-pct { font-size: 10px; color: var(--color-text-dim); }
+    .strat-card.highlight { border-color: var(--color-accent); background: var(--color-accent-soft); box-shadow: 0 0 20px var(--color-accent-glow); }
+
+    /* ── GAPS ── */
+    .gap-item { background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-4); margin-bottom: var(--space-2); transition: border-color var(--transition-fast); }
+    .gap-item:hover { border-color: var(--color-border-light); }
     .gap-item.urgent { border-color: #3b1111; background: #0f0808; }
-    .gap-item .gap-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .gap-item .gap-pilar { font-weight: 700; font-size: 13px; color: var(--text-primary); }
-    .gap-item .gap-detail { font-size: 12px; color: var(--text-muted); }
-    .gap-item .gap-action { font-size: 11px; color: var(--accent-light); margin-top: 6px; font-weight: 500; }
+    .gap-item .gap-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .gap-item .gap-pilar { font-weight: var(--font-bold); font-size: var(--text-sm); color: var(--color-text); }
+    .gap-item .gap-detail { font-size: var(--text-sm); color: var(--color-text-muted); }
+    .gap-item .gap-action { font-size: 11px; color: var(--color-accent-light); margin-top: var(--space-2); font-weight: var(--font-medium); }
 
-    /* ---- CALENDAR ---- */
-    .cal-cell { padding: 8px 6px; vertical-align: top; min-width: 120px; }
-    .cal-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-bottom: 6px; }
-    .cal-title { font-size: 11px; color: var(--text-secondary); line-height: 1.3; }
-    .cal-meta { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+    /* ── CALENDAR ── */
+    .cal-cell { padding: var(--space-2) 6px; vertical-align: top; min-width: 115px; }
+    .cal-post { background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-3); margin-bottom: var(--space-2); transition: border-color var(--transition-fast); }
+    .cal-post:hover { border-color: var(--color-border-light); }
+    .cal-post .cal-platform { margin-bottom: var(--space-1); }
+    .cal-post .cal-title { font-size: 11px; color: var(--color-text-secondary); line-height: 1.3; }
+    .cal-post .cal-meta { font-size: 10px; color: var(--color-text-dim); margin-top: var(--space-1); }
 
-    /* ---- RECOMMENDATIONS ---- */
-    .reco-panel { background: linear-gradient(135deg, #0a1e2e, #060f19); border: 1px solid #1a4654; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-    .reco-panel h3 { font-size: 13px; color: var(--accent-light); margin-bottom: 16px; font-weight: 700; }
-    .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 8px; }
-    .reco-item { background: #071520; border: 1px solid var(--border); border-radius: 8px; padding: 16px; transition: border-color .15s; }
-    .reco-item:hover { border-color: var(--accent); }
-    .reco-item .reco-title { font-size: 12px; font-weight: 700; color: var(--accent-light); margin-bottom: 6px; }
-    .reco-item .reco-body { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    /* ── RECOMMENDATIONS ── */
+    .reco-panel { background: linear-gradient(135deg, #0d2028, #0a141e); border: 1px solid #1a4654; border-radius: var(--radius-lg); padding: var(--space-6); margin-bottom: var(--space-6); }
+    .reco-panel h3 { font-size: var(--text-sm); color: var(--color-accent-light); margin-bottom: var(--space-4); font-weight: var(--font-bold); }
+    .reco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-2); }
+    .reco-item { background: #07141e; border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-4); transition: all var(--transition-fast); }
+    .reco-item:hover { border-color: var(--color-accent); transform: translateX(2px); }
+    .reco-item .reco-title { font-size: var(--text-sm); font-weight: var(--font-bold); color: var(--color-accent-light); margin-bottom: var(--space-2); }
+    .reco-item .reco-body { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.5; }
 
-    /* ---- FOOTER ---- */
-    footer { text-align: center; padding: 24px; color: var(--text-dim); font-size: 11px; border-top: 1px solid var(--border); margin-top: 32px; }
-    footer strong { color: var(--accent-light); }
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: var(--space-6); color: var(--color-text-dim); font-size: 11px; border-top: 1px solid var(--color-border); margin-top: var(--space-8); }
+    footer strong { color: var(--color-accent-light); }
 
-    /* ---- STATES ---- */
+    /* ── STATES ── */
     .view { display: none; animation: fadeIn .25s ease; }
     .view.active { display: block; }
     @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-    .loading { text-align:center; padding:64px; display:flex; flex-direction:column; align-items:center; gap:16px; }
-    .spinner { width:32px; height:32px; border:2px solid var(--border); border-top-color: var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
+    .loading-state { text-align:center; padding:var(--space-10); display:flex; flex-direction:column; align-items:center; gap:var(--space-4); color:var(--color-text-muted); font-size:var(--text-sm); }
+    .spinner { width:36px; height:36px; border:2.5px solid var(--color-border); border-top-color: var(--color-accent); border-radius:50%; animation:spin .7s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg)} }
-    .error-box { background: #1a0808; border:1px solid #4a1a1a; border-radius:8px; padding:14px 16px; color:#fca5a5; font-size:12px; margin-bottom:16px; }
+    .error-state { background: #1a0808; border:1px solid #4a1a1a; border-radius:var(--radius); padding:var(--space-4); color:#fca5a5; font-size:var(--text-sm); margin-bottom:var(--space-4); }
+    .empty-state { text-align:center; padding:var(--space-8); color:var(--color-text-dim); font-size:var(--text-sm); }
 
     @media(max-width:768px){
       .sidebar{width:56px;overflow:hidden}
       .sidebar-brand .brand-name,.sidebar-brand .brand-tag,.sidebar nav a span:not(.icon),.sidebar-footer div{display:none}
       .sidebar nav a .count{display:none}
-      .main{margin-left:56px;padding:16px}
+      .main{margin-left:56px;padding:var(--space-4)}
       .charts-row,.kpi-grid{grid-template-columns:1fr}
       .kpi-grid{grid-template-columns:repeat(2,1fr)}
       .kpi-value{font-size:28px}
-      .pilar-row .pilar-name{width:100px;font-size:10px}
+      .pilar-row .pilar-name{width:90px;font-size:10px}
       .topbar{flex-direction:column}
+      .reco-grid{grid-template-columns:1fr}
+      .strat-grid{grid-template-columns:repeat(3,1fr)}
+    }
+
+    @media(max-width:480px){
+      .kpi-grid{grid-template-columns:1fr}
+      .strat-grid{grid-template-columns:repeat(2,1fr)}
     }
   </style>
 </head>
 <body>
-<a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+<a href="#main-content" class="skip-link">Saltar al contenido</a>
 <div class="layout">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-row">
@@ -206,88 +239,76 @@
       </div>
       <div class="brand-tag">Strategic Luminance</div>
     </div>
-    <nav>
-      <a href="#" class="active" data-view="overview" onclick="switchView('overview')">
+    <nav role="navigation" aria-label="Navegación principal">
+      <a href="#" class="active" data-view="overview" onclick="switchView('overview')" aria-current="page">
         <span class="icon">📊</span> <span>Overview</span>
-        <span class="count" id="navTotal">—</span>
+        <span class="count" id="navTotal" aria-label="Total posts">—</span>
       </a>
       <a href="#" data-view="trends" onclick="switchView('trends')">
         <span class="icon">🎯</span> <span>Estrategia</span>
       </a>
       <a href="#" data-view="posts" onclick="switchView('posts')">
         <span class="icon">📋</span> <span>Posts</span>
-        <span class="count" id="navPosts">—</span>
+        <span class="count" id="navPosts" aria-label="Posts recientes">—</span>
       </a>
     </nav>
     <div class="sidebar-footer">
-      <span class="dot"></span>
+      <span class="dot" aria-hidden="true"></span>
       <div><strong>Athena 🦉</strong><br><span>Sistema activo</span></div>
     </div>
   </aside>
 
-  <!-- MAIN -->
-  <main class="main">
+  <main class="main" id="main-content">
     <div class="topbar">
       <div>
         <h1>Dashboard de Contenido</h1>
         <div class="subtitle">Social Media Analytics · <strong id="dateRange">Conectando...</strong></div>
       </div>
       <div class="topbar-actions">
-        <select class="select-filter" id="filterPlatform" onchange="renderAll()">
+        <select class="select-filter" id="filterPlatform" onchange="renderAll()" aria-label="Filtrar por plataforma">
           <option value="all">Todas las plataformas</option>
           <option value="Instagram">Instagram</option>
           <option value="Facebook">Facebook</option>
           <option value="LinkedIn">LinkedIn</option>
         </select>
-        <select class="select-filter" id="filterDays" onchange="loadData()">
+        <select class="select-filter" id="filterDays" onchange="loadData()" aria-label="Rango de fechas">
           <option value="7">7 días</option>
           <option value="14">14 días</option>
           <option value="30" selected>30 días</option>
           <option value="60">60 días</option>
         </select>
-        <button class="btn btn-accent" onclick="loadData()">⟳ Actualizar</button>
+        <button class="btn btn-accent" onclick="loadData()" aria-label="Actualizar datos">⟳ Actualizar</button>
       </div>
     </div>
 
-    <div id="errorBox" class="error-box" style="display:none;"></div>
-    <div id="loadingBox" class="loading"><div class="spinner"></div><span style="color:var(--text-dim)">Cargando métricas desde RF Consultoría Integral</span></div>
+    <div id="errorBox" class="error-state" style="display:none;" role="alert"></div>
+    <div id="loadingBox" class="loading-state"><div class="spinner"></div>Conectando con Baserow...</div>
 
-    <!-- OVERVIEW -->
     <div class="view active" id="view-overview">
       <div class="kpi-grid" id="kpiGrid"></div>
       <div class="charts-row">
-        <div class="panel"><h3>Distribución por Plataforma</h3><canvas id="chartPlatform"></canvas></div>
-        <div class="panel"><h3>Rendimiento por Pilar</h3><canvas id="chartPilar"></canvas></div>
+        <div class="panel"><div class="panel-header"><span class="dot-accent"></span><h3>Distribución por Plataforma</h3></div><canvas id="chartPlatform"></canvas></div>
+        <div class="panel"><div class="panel-header"><span class="dot-accent"></span><h3>Rendimiento por Pilar</h3></div><canvas id="chartPilar"></canvas></div>
       </div>
-      <div class="reco-panel" id="recoPanel">
-        <h3>🎯 Recomendaciones Estratégicas de Athena</h3>
-        <div class="reco-grid" id="recoGrid"></div>
-      </div>
+      <div class="reco-panel"><h3>🎯 Recomendaciones de Athena</h3><div class="reco-grid" id="recoGrid"></div></div>
     </div>
 
-    <!-- ESTRATEGIA -->
     <div class="view" id="view-trends">
       <div class="charts-row">
-        <div class="panel"><h3>Balance de Pilares vs Target</h3><div id="pilarBars" style="padding:4px 0;"></div></div>
-        <div class="panel"><h3>Gaps Estratégicos</h3><div id="strategicGaps"></div></div>
+        <div class="panel"><div class="panel-header"><span class="dot-accent"></span><h3>Balance de Pilares vs Target</h3></div><div id="pilarBars"></div></div>
+        <div class="panel"><div class="panel-header"><span class="dot-accent"></span><h3>Gaps Estratégicos</h3></div><div id="strategicGaps"></div></div>
       </div>
+      <div class="charts-row"><div class="panel" style="grid-column:1/-1;"><div class="panel-header"><span class="dot-accent"></span><h3>Próximos 7 Días</h3></div><div style="overflow-x:auto;"><table style="width:100%;"><thead><tr id="nextWeekHeader"></tr></thead><tbody id="nextWeekBody"></tbody></table></div></div></div>
       <div class="charts-row">
-        <div class="panel" style="grid-column:1/-1;"><h3>Próximos 7 Días</h3><div style="overflow-x:auto;"><table style="width:100%;"><thead><tr id="nextWeekHeader"></tr></thead><tbody id="nextWeekBody"></tbody></table></div></div>
-      </div>
-      <div class="charts-row">
-        <div class="panel"><h3>Estrategias de Athena</h3><div class="strat-grid" id="stratGrid"></div></div>
-        <div class="panel"><h3>Evolución Semanal</h3><canvas id="chartStrategyEvo"></canvas></div>
+        <div class="panel"><div class="panel-header"><span class="dot-accent"></span><h3>Estrategias Aplicadas</h3></div><div class="strat-grid" id="stratGrid"></div></div>
+        <div class="panel"><div class="panel-header"><span class="dot-accent"></span><h3>Evolución Semanal</h3></div><canvas id="chartStrategyEvo"></canvas></div>
       </div>
     </div>
 
-    <!-- POSTS -->
     <div class="view" id="view-posts">
       <div class="table-panel">
-        <div class="table-panel-header"><h3>Posts Recientes</h3><span style="font-size:11px;color:var(--text-dim);" id="postCount"></span></div>
-        <div class="table-wrap">
-          <table><thead><tr><th>Post</th><th>Plataforma</th><th>Pilar</th><th>Estrategias</th><th>Formato</th><th>Fecha</th><th>Horario</th><th>Likes</th><th>Coment.</th></tr></thead>
-          <tbody id="postsTbody"></tbody></table>
-        </div>
+        <div class="table-panel-header"><h3>Posts Recientes</h3><span style="font-size:11px;color:var(--color-text-dim);" id="postCount"></span></div>
+        <div class="table-wrap"><table aria-label="Lista de posts"><thead><tr><th>Post</th><th>Plataforma</th><th>Pilar</th><th>Estrategias</th><th>Formato</th><th>Fecha</th><th>Horario</th><th>Likes</th><th>Coment.</th></tr></thead><tbody id="postsTbody"></tbody></table></div>
       </div>
     </div>
 
@@ -296,143 +317,98 @@
 </div>
 
 <script>
-const STATE = { data: null, charts: {} };
-const stratIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
-const stratNames = { '9a':'Viaje del Héroe', '9b':'Contraste Precios', '9c':'CTA 1-Palabra', '9d':'Tutorial Visual', '9e':'Multiagente', '9f':'CTAs Densos' };
+const STATE={data:null,charts:{}};
+const stratIcons={'9a':'📖','9b':'💰','9c':'🎯','9d':'🎬','9e':'🤖','9f':'📊'};
+const stratNames={'9a':'Viaje del Héroe','9b':'Contraste Precios','9c':'CTA 1-Palabra','9d':'Tutorial Visual','9e':'Multiagente','9f':'CTAs Densos'};
 
-function badge(p) {
-  const m = { Instagram: 'badge-ig', Facebook: 'badge-fb', LinkedIn: 'badge-li' };
-  return `<span class="badge ${m[p]||''}">${p}</span>`;
-}
+function badge(p){const m={Instagram:'badge-ig',Facebook:'badge-fb',LinkedIn:'badge-li'};return `<span class="badge ${m[p]||''}">${p}</span>`;}
+function sV(n){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.sidebar nav a').forEach(a=>{a.classList.remove('active');a.removeAttribute('aria-current')});document.getElementById('view-'+n).classList.add('active');const lnk=document.querySelector(`[data-view="${n}"]`);lnk.classList.add('active');lnk.setAttribute('aria-current','page');if(STATE.data)renderAll();}
+function dC(k){if(STATE.charts[k]){STATE.charts[k].destroy();STATE.charts[k]=null;}}
 
-function switchView(n) {
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.sidebar nav a').forEach(a=>a.classList.remove('active'));
-  document.getElementById('view-'+n).classList.add('active');
-  document.querySelector(`[data-view="${n}"]`).classList.add('active');
-  if(STATE.data) renderAll();
-}
-
-function destroyChart(k) { if(STATE.charts[k]){STATE.charts[k].destroy();STATE.charts[k]=null;} }
-
-async function loadData() {
+async function loadData(){
   document.getElementById('loadingBox').style.display='flex';
   document.getElementById('errorBox').style.display='none';
-  try {
-    const res = await fetch('/api/metrics?days='+document.getElementById('filterDays').value);
-    STATE.data = await res.json();
-    if(STATE.data.error) throw new Error(STATE.data.error);
+  try{
+    const r=await fetch('/api/metrics?days='+document.getElementById('filterDays').value);
+    STATE.data=await r.json();
+    if(STATE.data.error)throw new Error(STATE.data.error);
     document.getElementById('loadingBox').style.display='none';
-    document.getElementById('dateRange').textContent = 'Actualizado: '+new Date(STATE.data.lastUpdated||Date.now()).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'});
+    document.getElementById('dateRange').textContent='Actualizado: '+new Date(STATE.data.lastUpdated||Date.now()).toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'});
     renderAll();
-  } catch(err) {
+  }catch(e){
     document.getElementById('loadingBox').style.display='none';
     document.getElementById('errorBox').style.display='block';
-    document.getElementById('errorBox').textContent='Error: '+err.message;
+    document.getElementById('errorBox').textContent='Error al cargar: '+e.message;
   }
 }
 
-function filterPosts() {
-  if(!STATE.data?.recentPosts) return [];
-  const plat = document.getElementById('filterPlatform').value;
-  return plat==='all' ? STATE.data.recentPosts : STATE.data.recentPosts.filter(p=>p.plataforma===plat);
+function fP(){if(!STATE.data?.recentPosts)return[];const p=document.getElementById('filterPlatform').value;return p==='all'?STATE.data.recentPosts:STATE.data.recentPosts.filter(x=>x.plataforma===p);}
+function renderAll(){rKPIs();rOverviewCharts();rStrategy();rPostsTable();rRecommendations();}
+
+function rKPIs(){
+  const d=STATE.data,pc=d?.platformCounts||{};
+  document.getElementById('navTotal').textContent=d?.total||'—';
+  document.getElementById('navPosts').textContent=(d?.recentPosts||[]).length||'—';
+  document.getElementById('kpiGrid').innerHTML=`
+    <div class="kpi-card"><div class="accent-line" style="background:linear-gradient(90deg,var(--teal-400),var(--purple-400));"></div><div class="kpi-glow" style="background:var(--teal-400);"></div><div class="kpi-icon">📊</div><div class="kpi-label">Total Posts</div><div class="kpi-value">${d?.total||0}</div><div class="kpi-sub">últimos ${document.getElementById('filterDays').value} días</div></div>
+    <div class="kpi-card"><div class="accent-line" style="background:var(--ig);"></div><div class="kpi-glow" style="background:var(--ig);"></div><div class="kpi-icon">📸</div><div class="kpi-label">Instagram</div><div class="kpi-value">${pc.Instagram||0}</div><div class="kpi-sub">Carruseles y visual</div></div>
+    <div class="kpi-card"><div class="accent-line" style="background:var(--fb);"></div><div class="kpi-glow" style="background:var(--fb);"></div><div class="kpi-icon">💬</div><div class="kpi-label">Facebook</div><div class="kpi-value">${pc.Facebook||0}</div><div class="kpi-sub">Conversacional</div></div>
+    <div class="kpi-card"><div class="accent-line" style="background:var(--li);"></div><div class="kpi-glow" style="background:var(--li);"></div><div class="kpi-icon">💼</div><div class="kpi-label">LinkedIn</div><div class="kpi-value">${pc.LinkedIn||0}</div><div class="kpi-sub">Ejecutivo B2B</div></div>`;
 }
 
-function renderAll() { renderKPIs(); renderOverviewCharts(); renderStrategy(); renderPostsTable(); renderRecommendations(); }
-
-function renderKPIs() {
-  const d = STATE.data, pc = d?.platformCounts||{};
-  document.getElementById('navTotal').textContent = d?.total||'—';
-  document.getElementById('navPosts').textContent = (d?.recentPosts||[]).length||'—';
-  document.getElementById('kpiGrid').innerHTML = `
-    <div class="kpi-card total"><div class="kpi-icon">📊</div><div class="kpi-label">Total Posts</div><div class="kpi-value">${d?.total||0}</div><div class="kpi-sub">en ${document.getElementById('filterDays').value} días</div></div>
-    <div class="kpi-card ig"><div class="kpi-icon">📸</div><div class="kpi-label">Instagram</div><div class="kpi-value">${pc.Instagram||0}</div><div class="kpi-sub">Carruseles y visual</div></div>
-    <div class="kpi-card fb"><div class="kpi-icon">💬</div><div class="kpi-label">Facebook</div><div class="kpi-value">${pc.Facebook||0}</div><div class="kpi-sub">Conversacional</div></div>
-    <div class="kpi-card li"><div class="kpi-icon">💼</div><div class="kpi-label">LinkedIn</div><div class="kpi-value">${pc.LinkedIn||0}</div><div class="kpi-sub">Ejecutivo B2B</div></div>`;
+function rOverviewCharts(){
+  const d=STATE.data;if(!d)return;
+  dC('platform');const pk=['Instagram','Facebook','LinkedIn'],pv=pk.map(k=>d.platformCounts?.[k]||0);
+  const c1=document.getElementById('chartPlatform');if(c1)STATE.charts.platform=new Chart(c1,{type:'bar',data:{labels:pk,datasets:[{data:pv,backgroundColor:['#e1306c20','#1877f220','#0a66c220'],borderColor:['#e1306c','#1877f2','#0a66c2'],borderWidth:1.5,borderRadius:8,hoverBackgroundColor:['#e1306c35','#1877f235','#0a66c235']}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',titleColor:'#f8fafc',bodyColor:'#cbd5e1',borderColor:'#334155',borderWidth:1,padding:12,cornerRadius:8}},scales:{y:{beginAtZero:true,ticks:{color:'#64748b',font:{size:11}},grid:{color:'#1e293b'}},x:{ticks:{color:'#cbd5e1',font:{size:11}},grid:{display:false}}}}});
+  dC('pilar');const plk=Object.keys(d.pilarCounts||{}),plv=Object.values(d.pilarCounts||{}),pc=['#2dd4bf','#818cf8','#f472b6','#34d399','#fbbf24','#f87171'];
+  const c2=document.getElementById('chartPilar');if(c2)STATE.charts.pilar=new Chart(c2,{type:'doughnut',data:{labels:plk,datasets:[{data:plv,backgroundColor:plv.map((_,i)=>pc[i%6]+'88'),borderColor:plv.map((_,i)=>pc[i%6]),borderWidth:1.5,hoverBorderWidth:2.5}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1',padding:16,font:{size:11},usePointStyle:true,pointStyleWidth:10}},tooltip:{backgroundColor:'#1e293b',titleColor:'#f8fafc',bodyColor:'#cbd5e1',borderColor:'#334155',borderWidth:1,padding:12,cornerRadius:8}}}});
 }
 
-function renderOverviewCharts() {
-  const d = STATE.data; if(!d) return;
-  destroyChart('platform');
-  const platKeys=['Instagram','Facebook','LinkedIn'];
-  const pv=platKeys.map(k=>d.platformCounts?.[k]||0);
-  const c1=document.getElementById('chartPlatform');
-  if(c1) STATE.charts.platform = new Chart(c1,{type:'bar',data:{labels:platKeys,datasets:[{data:pv,backgroundColor:['#e1306c22','#1877f222','#0a66c222'],borderColor:['#e1306c','#1877f2','#0a66c2'],borderWidth:1.5,borderRadius:8}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#6b7d95'},grid:{color:'#1a2842'}},x:{ticks:{color:'#c8d3e6'},grid:{display:false}}}}});
-  destroyChart('pilar');
-  const pk=Object.keys(d.pilarCounts||{}), pvv=Object.values(d.pilarCounts||{});
-  const pcol=['#2e95a8','#818cf8','#f472b6','#34d399','#fbbf24','#f87171'];
-  const c2=document.getElementById('chartPilar');
-  if(c2) STATE.charts.pilar = new Chart(c2,{type:'doughnut',data:{labels:pk,datasets:[{data:pvv,backgroundColor:pvv.map((_,i)=>pcol[i%6]+'88'),borderColor:pvv.map((_,i)=>pcol[i%6]),borderWidth:1.5}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#c8d3e6',padding:14,font:{size:11}}}}}});
-}
-
-function renderStrategy() {
-  const d = STATE.data; if(!d) return;
-  const pc = d.pilarCounts||{}, platC = d.platformCounts||{}, total=Object.values(pc).reduce((a,b)=>a+b,0)||1;
-  const targets = {'Automatización':27,'Soporte Técnico':27,'IA':18,'Capacitación':18,'Transformación Digital':10};
-  const colors = {'Automatización':'#3b82f6','Soporte Técnico':'#f59e0b','IA':'#a78bfa','Capacitación':'#34d399','Transformación Digital':'#f472b6'};
-
-  // Pilar bars
-  let bars='', gaps=[];
-  Object.entries(targets).forEach(([p,tp])=>{
-    const a=pc[p]||0, ap=((a/total)*100), diff=ap-tp;
-    const s=diff<-3?'🔴':diff<0?'🟡':'🟢';
-    if(diff<-2) gaps.push({pilar:p,actual:a,targetPct:tp,actualPct:ap.toFixed(1),diff:diff.toFixed(1)});
-    bars+=`<div class="pilar-row"><span class="pilar-name">${p}</span><div class="bar-track"><div class="bar-fill" style="background:${colors[p]};width:${Math.min(ap,100)}%"></div><div class="bar-marker" style="left:${tp}%"></div></div><span class="bar-val">${ap.toFixed(0)}%</span><span class="bar-diff">${s} ${diff>0?'+':''}${diff.toFixed(0)}%</span></div>`;
-  });
+function rStrategy(){
+  const d=STATE.data;if(!d)return;
+  const pc=d.pilarCounts||{},plC=d.platformCounts||{},total=Object.values(pc).reduce((a,b)=>a+b,0)||1;
+  const targets={'Automatización':27,'Soporte Técnico':27,'IA':18,'Capacitación':18,'Transformación Digital':10};
+  const cols={'Automatización':'#3b82f6','Soporte Técnico':'#f59e0b','IA':'#a78bfa','Capacitación':'#34d399','Transformación Digital':'#f472b6'};
+  let bars='',gaps=[];
+  Object.entries(targets).forEach(([p,tp])=>{const a=pc[p]||0,ap=((a/total)*100),diff=ap-tp,s=diff<-3?'🔴':diff<0?'🟡':'🟢';if(diff<-2)gaps.push({p,actual:a,tP:tp,aP:ap.toFixed(1),diff:diff.toFixed(1)});bars+=`<div class="pilar-row"><span class="pilar-name">${p}</span><div class="bar-wrap"><div class="bar-fill" style="background:${cols[p]};width:${Math.min(ap,100)}%"></div><div class="bar-marker" style="left:${tp}%"></div></div><span class="bar-val">${ap.toFixed(0)}%</span><span class="bar-diff">${s} ${diff>0?'+':''}${diff.toFixed(0)}%</span></div>`;});
   document.getElementById('pilarBars').innerHTML=bars;
+  let gH='';if(!gaps.length)gH='<p style="color:var(--color-success);font-size:var(--text-sm);padding:var(--space-3);">✅ Todos los pilares dentro del rango objetivo</p>';
+  else gaps.forEach(g=>{const n=Math.max(1,Math.ceil((g.tP*total/100)-g.actual));gH+=`<div class="gap-item urgent"><div class="gap-head"><span>🔴</span><span class="gap-pilar">${g.p}</span></div><div class="gap-detail">${g.aP}% actual vs ${g.tP}% objetivo (${g.diff}%)</div><div class="gap-action">→ Crear <b>${n} post${n!==1?'s':''}</b> de ${g.p}</div></div>`;});
+  const ip=((plC.Instagram||0)/total*100).toFixed(0),fp=((plC.Facebook||0)/total*100).toFixed(0),lp=((plC.LinkedIn||0)/total*100).toFixed(0);
+  gH+=`<div class="gap-item"><div class="gap-head"><span>📱</span><span class="gap-pilar">Distribución Plataformas</span></div><div class="gap-detail">Instagram ${ip}% · Facebook ${fp}% · LinkedIn ${lp}%</div><div class="gap-action">${parseInt(lp)<25?'→ LinkedIn bajo. Priorizar contenido ejecutivo. ':''}${parseInt(fp)<20?'→ Facebook bajo. Reforzar posts. ':''}${parseInt(ip)>40?'→ Instagram alto. Redistribuir. ':''}</div></div>`;
+  document.getElementById('strategicGaps').innerHTML=gH;
 
-  // Gaps
-  let gHtml='';
-  if(!gaps.length) gHtml='<p style="color:var(--success);font-size:12px;padding:12px;">✅ Todos los pilares dentro del rango objetivo</p>';
-  else gaps.forEach(g=>{const n=Math.max(1,Math.ceil((g.targetPct*total/100)-g.actual));gHtml+=`<div class="gap-item urgent"><div class="gap-head"><span>🔴</span><span class="gap-pilar">${g.pilar}</span></div><div class="gap-detail">${g.actualPct}% actual vs ${g.targetPct}% objetivo (${g.diff}%)</div><div class="gap-action">→ Crear <b>${n} post${n!==1?'s':''}</b> de ${g.pilar}</div></div>`;});
-  const ip=((platC.Instagram||0)/total*100).toFixed(0), fp=((platC.Facebook||0)/total*100).toFixed(0), lp=((platC.LinkedIn||0)/total*100).toFixed(0);
-  gHtml+=`<div class="gap-item"><div class="gap-head"><span>📱</span><span class="gap-pilar">Distribución Plataformas</span></div><div class="gap-detail">Instagram ${ip}% · Facebook ${fp}% · LinkedIn ${lp}%</div><div class="gap-action">${parseInt(lp)<25?'→ LinkedIn bajo. Priorizar contenido ejecutivo. ':''}${parseInt(fp)<20?'→ Facebook bajo. Reforzar posts. ':''}${parseInt(ip)>40?'→ Instagram alto. Redistribuir. ':''}</div></div>`;
-  document.getElementById('strategicGaps').innerHTML=gHtml;
-
-  // Strategy cards
-  const sc = d.strategyCounts||{}, tS=Object.values(sc).reduce((a,b)=>a+b,0)||1;
-  let sGrid='';
-  Object.entries(stratNames).forEach(([k,n])=>{
-    const c=sc[k]||0, pct=((c/tS)*100).toFixed(0);
-    sGrid+=`<div class="strat-card${c===0?'':' highlight'}"><div class="strat-icon">${stratIcons[k]}</div><div class="strat-label">${n}</div><div class="strat-count">${c}</div><div class="strat-pct">${pct}%</div></div>`;
-  });
+  const sc=d.strategyCounts||{},tS=Object.values(sc).reduce((a,b)=>a+b,0)||1;
+  let sG='';Object.entries(stratNames).forEach(([k,n])=>{const c=sc[k]||0,pct=((c/tS)*100).toFixed(0);sG+=`<div class="strat-card${c===0?'':' highlight'}"><div class="strat-icon">${stratIcons[k]}</div><div class="strat-label">${n}</div><div class="strat-value">${c}</div><div class="strat-pct">${pct}% del total</div></div>`;});
   const missing=Object.entries(stratNames).filter(([k])=>!sc[k]);
-  if(missing.length) sGrid+=`<div class="strat-card" style="border-color:#3b1111;"><div class="strat-icon">⚠️</div><div class="strat-label" style="color:#fca5a5;">Sin aplicar</div><div class="strat-count" style="font-size:13px;color:#fca5a5;">${missing.map(([k])=>stratIcons[k]).join('')}</div></div>`;
-  document.getElementById('stratGrid').innerHTML=sGrid;
+  if(missing.length)sG+=`<div class="strat-card" style="border-color:#3b1111;"><div class="strat-icon">⚠️</div><div class="strat-label" style="color:#fca5a5;">Sin aplicar</div><div class="strat-value" style="font-size:14px;color:#fca5a5;">${missing.map(([k])=>stratIcons[k]).join('')}</div></div>`;
+  document.getElementById('stratGrid').innerHTML=sG;
 
-  // Evolution chart
-  destroyChart('strategyEvo');
-  const sw=d.strategyByWeek||{}, ws=Object.keys(sw).sort().slice(-6);
+  dC('strategyEvo');const sw=d.strategyByWeek||{},ws=Object.keys(sw).sort().slice(-6);
   const ce=document.getElementById('chartStrategyEvo');
-  if(ce&&ws.length>0){
-    const ds=Object.entries(stratNames).map(([k,n],i)=>({label:n,data:ws.map(w=>sw[w]?.[k]||0),borderColor:['#2e95a8','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],backgroundColor:'transparent',tension:.3,borderWidth:2,pointRadius:3}));
-    STATE.charts.strategyEvo=new Chart(ce,{type:'line',data:{labels:ws,datasets:ds},options:{responsive:true,plugins:{legend:{labels:{color:'#c8d3e6',padding:8,font:{size:10},boxWidth:12}}},scales:{y:{beginAtZero:true,ticks:{color:'#6b7d95',stepSize:1},grid:{color:'#1a2842'}},x:{ticks:{color:'#c8d3e6'},grid:{display:false}}}}});
-  }
+  if(ce&&ws.length>0){const ds=Object.entries(stratNames).map(([k,n],i)=>({label:n,data:ws.map(w=>sw[w]?.[k]||0),borderColor:['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],backgroundColor:'transparent',tension:.3,borderWidth:2,pointRadius:3,pointHoverRadius:6}));STATE.charts.strategyEvo=new Chart(ce,{type:'line',data:{labels:ws,datasets:ds},options:{responsive:true,plugins:{legend:{labels:{color:'#cbd5e1',padding:8,font:{size:10},boxWidth:12,usePointStyle:true}},tooltip:{backgroundColor:'#1e293b',titleColor:'#f8fafc',bodyColor:'#cbd5e1',borderColor:'#334155',borderWidth:1}},scales:{y:{beginAtZero:true,ticks:{color:'#64748b',stepSize:1},grid:{color:'#1e293b'}},x:{ticks:{color:'#cbd5e1'},grid:{display:false}}}}})}
 
-  // Calendar
-  const posts=d.recentPosts||[], today=new Date(); today.setHours(0,0,0,0);
-  const n7=new Date(today); n7.setDate(n7.getDate()+7);
-  const up=posts.filter(p=>{if(!p.fecha)return false;const dd=new Date(p.fecha+'T12:00:00');return dd>=today&&dd<=n7;}).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
-  const days=[], dn=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const posts=d.recentPosts||[],today=new Date();today.setHours(0,0,0,0);const n7=new Date(today);n7.setDate(n7.getDate()+7);
+  const up=posts.filter(p=>{if(!p.fecha)return!1;const dd=new Date(p.fecha+'T12:00:00');return dd>=today&&dd<=n7;}).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const days=[],dn=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   for(let i=0;i<7;i++){const dd=new Date(today);dd.setDate(dd.getDate()+i);days.push({label:`${dn[dd.getDay()]} ${dd.getDate()}/${dd.getMonth()+1}`,date:dd.toISOString().slice(0,10),posts:up.filter(p=>p.fecha===dd.toISOString().slice(0,10))});}
-  document.getElementById('nextWeekHeader').innerHTML=days.map(d=>`<th style="text-align:center;min-width:115px;padding:10px 6px;">${d.label}</th>`).join('');
-  document.getElementById('nextWeekBody').innerHTML=`<tr>${days.map(d=>{if(!d.posts.length)return'<td style="text-align:center;color:var(--text-dim);padding:16px 8px;">—</td>';return`<td class="cal-cell">${d.posts.map(p=>`<div style="margin-bottom:8px;"><div class="cal-badge badge-${p.plataforma==='Instagram'?'ig':p.plataforma==='Facebook'?'fb':'li'}">${p.plataforma}</div><div class="cal-title">${(p.titulo||'').slice(0,35)}${(p.titulo||'').length>35?'…':''}</div><div class="cal-meta">${p.pilar} · ${p.horario||''}</div></div>`).join('')}</td>`;}).join('')}</tr>`;
+  document.getElementById('nextWeekHeader').innerHTML=days.map(d=>`<th style="text-align:center;min-width:115px;padding:var(--space-3) 6px;">${d.label}</th>`).join('');
+  document.getElementById('nextWeekBody').innerHTML=`<tr>${days.map(d=>{if(!d.posts.length)return'<td style="text-align:center;color:var(--color-text-dim);padding:var(--space-4) var(--space-2);">—</td>';return`<td class="cal-cell">${d.posts.map(p=>`<div class="cal-post"><div class="cal-platform">${badge(p.plataforma)}</div><div class="cal-title">${(p.titulo||'').slice(0,30)}${(p.titulo||'').length>30?'…':''}</div><div class="cal-meta">${p.pilar} · ${p.horario||''}</div></div>`).join('')}</td>`;}).join('')}</tr>`;
 }
 
-function renderPostsTable() {
-  const posts=filterPosts();
-  document.getElementById('postCount').textContent=`${posts.length} posts`;
-  document.getElementById('postsTbody').innerHTML=posts.slice(0,30).map(p=>`<tr><td title="${p.titulo||''}">${(p.titulo||'').slice(0,50)}${(p.titulo||'').length>50?'…':''}</td><td>${badge(p.plataforma)}</td><td>${p.pilar||'—'}</td><td>${(p.estrategias||[]).map(s=>stratIcons[s]||'').join('')||'<span class="text-dim">—</span>'}</td><td>${p.formato||'—'}</td><td style="white-space:nowrap">${p.fecha||'—'}</td><td style="white-space:nowrap;color:var(--text-dim);">${p.horario||'—'}</td><td>${p.likes!=null?p.likes:'<span class="text-dim">—</span>'}</td><td>${p.comentarios!=null?p.comentarios:'<span class="text-dim">—</span>'}</td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:32px;">No hay posts en este período</td></tr>';
+function rPostsTable(){
+  const posts=fP();document.getElementById('postCount').textContent=`${posts.length} posts`;
+  document.getElementById('postsTbody').innerHTML=posts.slice(0,30).map(p=>`<tr><td title="${p.titulo||''}">${(p.titulo||'').slice(0,48)}${(p.titulo||'').length>48?'…':''}</td><td>${badge(p.plataforma)}</td><td>${p.pilar||'—'}</td><td>${(p.estrategias||[]).map(s=>stratIcons[s]||'').join('')||'<span class="text-dim">—</span>'}</td><td>${p.formato||'—'}</td><td style="white-space:nowrap">${p.fecha||'—'}</td><td style="white-space:nowrap;color:var(--color-text-dim);">${p.horario||'—'}</td><td>${p.likes!=null?p.likes:'<span class="text-dim">—</span>'}</td><td>${p.comentarios!=null?p.comentarios:'<span class="text-dim">—</span>'}</td></tr>`).join('')||'<tr><td colspan="9" class="empty-state">No hay posts en este período</td></tr>';
 }
 
-function renderRecommendations() {
+function rRecommendations(){
   const d=STATE.data,pc=d?.pilarCounts||{},total=Object.values(pc).reduce((a,b)=>a+b,0),recos=[];
-  if(Object.keys(pc).length){const t={'Automatización':27,'Soporte Técnico':27,'IA':18,'Capacitación':18,'Transformación Digital':10};const w=Object.entries(t).reduce((a,[k,v])=>{const p=((pc[k]||0)/total*100);return p-v<a.diff?{pilar:k,diff:p-v}:a;},{pilar:'',diff:0});if(w.diff<-2)recos.push({title:'⚖️ Balance de Pilares',body:`"${w.pilar}" está ${Math.abs(w.diff).toFixed(0)}% bajo el target. Prioriza contenido de este pilar esta semana.`});}
-  const plc=d?.platformCounts||{};if((plc.Instagram||0)>(plc.LinkedIn||0)+5)recos.push({title:'📱 Saturación Instagram',body:'Hay más posts en Instagram que LinkedIn. Redistribuye contenido ejecutivo a LinkedIn.'});
-  const sc=d?.strategyCounts||{};if(!sc['9f'])recos.push({title:'📊 CTAs Densos sin usar',body:'La estrategia 9f no se ha aplicado. Úsala en carruseles de 6+ slides con 2 CTAs complementarios.'});if(!sc['9c']||sc['9c']<5)recos.push({title:'🎯 Aumenta CTAs 1-Palabra',body:'Posts con keyword activan funnel Aria→DM. Usa OPUS o AGENTE en más CTAs.'});
-  recos.push({title:'🌐 Tráfico Web (Regla 3b)',body:'1 de cada 5 posts debe linkear a rfconsultoriaintegral.com.mx con diagnóstico gratuito.'});
-  recos.push({title:'🔗 Automatización + Capacitación',body:'Siempre conectar: implementar + capacitar. No vender uno sin el otro.'});
-  recos.push({title:'🎬 Tutorial Visual (9d)',body:'1 carrusel tutorial por semana con pilar IA o Automatización. Muestra el proceso, no solo el resultado.'});
+  if(Object.keys(pc).length){const t={'Automatización':27,'Soporte Técnico':27,'IA':18,'Capacitación':18,'Transformación Digital':10};const w=Object.entries(t).reduce((a,[k,v])=>{const p=((pc[k]||0)/total*100);return p-v<a.diff?{pilar:k,diff:p-v}:a;},{pilar:'',diff:0});if(w.diff<-2)recos.push({title:'⚖️ Balance de Pilares',body:`"${w.pilar}" está ${Math.abs(w.diff).toFixed(0)}% bajo el target. Prioriza este pilar.`});}
+  const plc=d?.platformCounts||{};if((plc.Instagram||0)>(plc.LinkedIn||0)+5)recos.push({title:'📱 Distribución Plataformas',body:'Instagram tiene más presencia que LinkedIn. Redistribuye contenido ejecutivo a LinkedIn para mejor engagement B2B.'});
+  const sc=d?.strategyCounts||{};if(!sc['9f'])recos.push({title:'📊 CTAs Densos sin usar',body:'La estrategia 9f (múltiples CTAs en carruseles 6+ slides) no se ha aplicado. Agrégala al próximo carrusel.'});if(!sc['9c']||sc['9c']<5)recos.push({title:'🎯 Aumenta CTAs 1-Palabra',body:'Posts con keyword activan funnel Aria→DM. Usa OPUS o AGENTE en más CTAs para automatizar la captación.'});
+  recos.push({title:'🌐 Tráfico Web',body:'1 de cada 5 posts debe linkear a rfconsultoriaintegral.com.mx con oferta de diagnóstico gratuito (Regla 3b).'});
+  recos.push({title:'🔗 Automatización + Capacitación',body:'Siempre conecta implementación técnica con capacitación del equipo. No vendas herramientas sin entrenamiento.'});
+  recos.push({title:'🎬 Tutorial Visual (9d)',body:'1 carrusel tutorial por semana con pilar IA/Automatización. Muestra EL PROCESO, no solo el resultado final.'});
   document.getElementById('recoGrid').innerHTML=recos.map(r=>`<div class="reco-item"><div class="reco-title">${r.title}</div><div class="reco-body">${r.body}</div></div>`).join('');
 }
 
