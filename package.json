@@ -1,0 +1,8 @@
+{
+  "name": "athena-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "vercel": "^54.7.1"
+  }
+}

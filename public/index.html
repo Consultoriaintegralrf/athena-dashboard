@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Athena Analytics 🦉 | RF Consultoría Integral</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --surface: #111827;
+      --surface2: #1a2236;
+      --border: #1e2d4a;
+      --navy: #1e3a5f;
+      --teal: #0d9488;
+      --teal-light: #2dd4bf;
+      --text: #e2e8f0;
+      --text2: #94a3b8;
+      --text3: #64748b;
+      --red: #ef4444;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --ig: #e1306c;
+      --fb: #1877f2;
+      --li: #0a66c2;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    
+    /* Sidebar */
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; display: flex; flex-direction: column; }
+    .sidebar-brand { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+    .sidebar-brand h2 { font-size: 18px; font-weight: 700; }
+    .sidebar-brand h2 span { color: var(--teal-light); }
+    .sidebar-brand p { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .sidebar nav { flex:1; padding: 0 12px; }
+    .sidebar nav a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 2px; transition: all .15s; }
+    .sidebar nav a:hover, .sidebar nav a.active { background: var(--navy); color: var(--teal-light); }
+    .sidebar nav a .icon { font-size: 16px; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); }
+    .sidebar-footer .dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 6px; animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* Main */
+    .main { margin-left: 240px; flex: 1; padding: 24px 32px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .topbar h1 { font-size: 26px; font-weight: 700; }
+    .topbar-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all .15s; }
+    .btn-ghost { background: transparent; color: var(--text2); }
+    .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+    .btn-primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .btn-primary:hover { background: #0f766e; }
+    .select-filter { padding: 8px 12px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 13px; cursor: pointer; }
+
+    /* KPI Grid */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: relative; overflow: hidden; }
+    .kpi-card::before { content: ''; position: absolute; top:0; left:0; right:0; height: 3px; }
+    .kpi-card.ig::before { background: var(--ig); }
+    .kpi-card.fb::before { background: var(--fb); }
+    .kpi-card.li::before { background: var(--li); }
+    .kpi-card.total::before { background: linear-gradient(90deg, var(--teal-light), var(--ig), var(--fb), var(--li)); }
+    .kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 8px; }
+    .kpi-value { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
+    .kpi-trend { font-size: 12px; margin-top: 6px; font-weight: 500; }
+    .kpi-trend.up { color: var(--green); }
+    .kpi-trend.down { color: var(--red); }
+    .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+    /* Charts row */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+    .charts-row.full { grid-template-columns: 1fr; }
+    .chart-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .chart-panel h3 { font-size: 13px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
+    .chart-panel canvas { max-height: 300px; }
+
+    /* Table */
+    .table-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+    .table-panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .table-panel-header h3 { font-size: 13px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text3); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
+    td { padding: 12px 16px; border-bottom: 1px solid #0f172a; }
+    tr:hover td { background: #0f172a; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+    .badge-ig { background: #e1306c20; color: #f472b6; }
+    .badge-fb { background: #1877f220; color: #60a5fa; }
+    .badge-li { background: #0a66c220; color: #38bdf8; }
+    .metric-null { color: var(--text3); font-style: italic; }
+
+    /* Recommendation */
+    .reco-panel { background: linear-gradient(135deg, #0d2b3e, #0a1a2b); border: 1px solid #1e4a5f; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .reco-panel h3 { color: var(--teal-light); font-size: 15px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .reco-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    .reco-item { background: #0f1a2e; border: 1px solid #1e3a4f; border-radius: 8px; padding: 16px; }
+    .reco-item .reco-title { font-size: 13px; font-weight: 700; color: var(--teal-light); margin-bottom: 6px; }
+    .reco-item .reco-body { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    /* View switching */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Loading */
+    .loading { text-align:center; padding:48px; color:var(--text3); }
+    .spinner { display:inline-block; width:32px; height:32px; border:3px solid var(--border); border-top-color: var(--teal-light); border-radius:50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .error-state { background:#3b1111; color:#fca5a5; padding:16px 20px; border-radius:8px; margin-bottom:16px; font-size:13px; }
+
+    @media(max-width:768px){
+      .sidebar{width:60px;overflow:hidden}
+      .sidebar nav a span:not(.icon){display:none}
+      .sidebar-brand h2,.sidebar-brand p{display:none}
+      .main{margin-left:60px;padding:16px}
+      .charts-row{grid-template-columns:1fr}
+      .kpi-grid{grid-template-columns:repeat(2,1fr)}
+      .kpi-value{font-size:24px}
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2>🦉 <span>Athena</span></h2>
+      <p>Social Media Analytics</p>
+    </div>
+    <nav>
+      <a href="#" class="active" data-view="overview" onclick="switchView('overview')">
+        <span class="icon">📊</span> <span>Overview</span>
+      </a>
+      <a href="#" data-view="trends" onclick="switchView('trends')">
+        <span class="icon">📈</span> <span>Tendencias</span>
+      </a>
+      <a href="#" data-view="posts" onclick="switchView('posts')">
+        <span class="icon">📋</span> <span>Posts</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="dot"></span> Sistema activo<br>
+      RF Consultoría Integral
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div>
+        <h1>Dashboard de Contenido</h1>
+        <div style="color:var(--text3);font-size:13px;margin-top:4px;" id="dateRange">Cargando...</div>
+      </div>
+      <div class="topbar-actions">
+        <select class="select-filter" id="filterPlatform" onchange="renderAll()">
+          <option value="all">Todas las plataformas</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Facebook">Facebook</option>
+          <option value="LinkedIn">LinkedIn</option>
+        </select>
+        <select class="select-filter" id="filterDays" onchange="renderAll()">
+          <option value="7">Últimos 7 días</option>
+          <option value="14">Últimos 14 días</option>
+          <option value="30" selected>Últimos 30 días</option>
+          <option value="60">Últimos 60 días</option>
+        </select>
+        <button class="btn btn-ghost" onclick="loadData()">⟳ Actualizar</button>
+      </div>
+    </div>
+
+    <div id="errorBox" class="error-state" style="display:none;"></div>
+    <div id="loadingBox" class="loading"><div class="spinner"></div><p style="margin-top:12px;">Cargando métricas...</p></div>
+
+    <!-- View: Overview -->
+    <div class="view active" id="view-overview">
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="charts-row">
+        <div class="chart-panel"><h3>Distribución por Plataforma</h3><canvas id="chartPlatform"></canvas></div>
+        <div class="chart-panel"><h3>Rendimiento por Pilar</h3><canvas id="chartPilar"></canvas></div>
+      </div>
+      <div class="reco-panel" id="recoPanel">
+        <h3>🎯 Recomendaciones Estratégicas</h3>
+        <div class="reco-grid" id="recoGrid"></div>
+      </div>
+    </div>
+
+    <!-- View: Trends -->
+    <div class="view" id="view-trends">
+      <div class="charts-row full">
+        <div class="chart-panel"><h3>Publicaciones por Semana</h3><canvas id="chartWeekly"></canvas></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-panel"><h3>Engagement por Formato</h3><canvas id="chartFormat"></canvas></div>
+        <div class="chart-panel"><h3>Distribución de Objetivos</h3><canvas id="chartObjetivo"></canvas></div>
+      </div>
+    </div>
+
+    <!-- View: Posts -->
+    <div class="view" id="view-posts">
+      <div class="table-panel">
+        <div class="table-panel-header">
+          <h3>Posts Recientes</h3>
+          <span style="font-size:12px;color:var(--text3);" id="postCount"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Post</th>
+                <th>Plataforma</th>
+                <th>Pilar</th>
+                <th>Formato</th>
+                <th>Objetivo</th>
+                <th>Fecha</th>
+                <th>Horario</th>
+                <th>Likes</th>
+                <th>Coment.</th>
+              </tr>
+            </thead>
+            <tbody id="postsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const STATE = { data: null, charts: {} };
+
+function badge(p) {
+  const m = { Instagram: 'badge-ig', Facebook: 'badge-fb', LinkedIn: 'badge-li' };
+  return `<span class="badge ${m[p]||''}">${p}</span>`;
+}
+
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelector(`[data-view="${name}"]`).classList.add('active');
+  if (STATE.data) renderAll();
+}
+
+function destroyChart(key) {
+  if (STATE.charts[key]) { STATE.charts[key].destroy(); STATE.charts[key] = null; }
+}
+
+async function loadData() {
+  document.getElementById('loadingBox').style.display = 'block';
+  document.getElementById('errorBox').style.display = 'none';
+  
+  try {
+    const res = await fetch('/api/metrics?days=' + document.getElementById('filterDays').value);
+    STATE.data = await res.json();
+    if (STATE.data.error) throw new Error(STATE.data.error);
+    document.getElementById('loadingBox').style.display = 'none';
+    document.getElementById('dateRange').textContent = 
+      'Datos actualizados: ' + new Date(STATE.data.lastUpdated || Date.now()).toLocaleString('es-MX');
+    renderAll();
+  } catch (err) {
+    document.getElementById('loadingBox').style.display = 'none';
+    document.getElementById('errorBox').style.display = 'block';
+    document.getElementById('errorBox').textContent = 'Error al cargar datos: ' + err.message;
+  }
+}
+
+function filterPosts() {
+  if (!STATE.data?.recentPosts) return [];
+  const plat = document.getElementById('filterPlatform').value;
+  if (plat === 'all') return STATE.data.recentPosts;
+  return STATE.data.recentPosts.filter(p => p.plataforma === plat);
+}
+
+function renderAll() {
+  renderKPIs();
+  renderOverviewCharts();
+  renderTrendsCharts();
+  renderPostsTable();
+  renderRecommendations();
+}
+
+function renderKPIs() {
+  const posts = filterPosts();
+  const total = STATE.data?.total || 0;
+  const platCounts = STATE.data?.platformCounts || {};
+  
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = `
+    <div class="kpi-card total">
+      <div class="kpi-label">Total Posts</div>
+      <div class="kpi-value">${total}</div>
+      <div class="kpi-sub">en ${document.getElementById('filterDays').value} días</div>
+    </div>
+    <div class="kpi-card ig">
+      <div class="kpi-label">📸 Instagram</div>
+      <div class="kpi-value">${platCounts.Instagram || 0}</div>
+      <div class="kpi-sub">Carruseles programados</div>
+    </div>
+    <div class="kpi-card fb">
+      <div class="kpi-label">💬 Facebook</div>
+      <div class="kpi-value">${platCounts.Facebook || 0}</div>
+      <div class="kpi-sub">Posts conversacionales</div>
+    </div>
+    <div class="kpi-card li">
+      <div class="kpi-label">💼 LinkedIn</div>
+      <div class="kpi-value">${platCounts.LinkedIn || 0}</div>
+      <div class="kpi-sub">Posts ejecutivos</div>
+    </div>
+  `;
+}
+
+function renderOverviewCharts() {
+  const data = STATE.data;
+  if (!data) return;
+  
+  // Platform
+  destroyChart('platform');
+  const platKeys = ['Instagram', 'Facebook', 'LinkedIn'];
+  const platVals = platKeys.map(k => data.platformCounts?.[k] || 0);
+  const ctx1 = document.getElementById('chartPlatform');
+  if (ctx1) {
+    STATE.charts.platform = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: platKeys,
+        datasets: [{
+          data: platVals,
+          backgroundColor: ['#e1306c44','#1877f244','#0a66c244'],
+          borderColor: ['#e1306c','#1877f2','#0a66c2'],
+          borderWidth: 1.5, borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#64748b' }, grid: { color: '#1e2d4a' } },
+          x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // Pilar
+  destroyChart('pilar');
+  const pilKeys = Object.keys(data.pilarCounts || {});
+  const pilVals = Object.values(data.pilarCounts || {});
+  const pilColors = ['#2dd4bf','#818cf8','#f472b6','#34d399','#fbbf24','#f87171'];
+  const ctx2 = document.getElementById('chartPilar');
+  if (ctx2) {
+    STATE.charts.pilar = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: pilKeys,
+        datasets: [{
+          data: pilVals,
+          backgroundColor: pilVals.map((_,i) => pilColors[i%6]+'99'),
+          borderColor: pilVals.map((_,i) => pilColors[i%6]),
+          borderWidth: 1.5
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 14, font: { size: 11 } } } }
+      }
+    });
+  }
+}
+
+function renderTrendsCharts() {
+  const posts = STATE.data?.recentPosts || [];
+  if (!posts.length) return;
+
+  // Weekly posting
+  destroyChart('weekly');
+  const weekMap = {};
+  posts.forEach(p => {
+    if (!p.fecha) return;
+    const d = new Date(p.fecha + 'T12:00:00');
+    const mon = d.toLocaleDateString('es-MX', { month:'short', day:'numeric' });
+    const key = `${mon}`;
+    weekMap[key] = (weekMap[key] || 0) + 1;
+  });
+  const wkKeys = Object.keys(weekMap).slice(-8);
+  const wkVals = wkKeys.map(k => weekMap[k]);
+  const ctx1 = document.getElementById('chartWeekly');
+  if (ctx1) {
+    STATE.charts.weekly = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: wkKeys,
+        datasets: [{
+          label: 'Posts', data: wkVals,
+          borderColor: '#2dd4bf', backgroundColor: '#2dd4bf22',
+          fill: true, tension: 0.3, pointRadius: 4, borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#94a3b8' } } },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#64748b', stepSize: 1 }, grid: { color: '#1e2d4a' } },
+          x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // Format distribution
+  destroyChart('format');
+  const fmtMap = {};
+  posts.forEach(p => { const f = p.formato || 'Sin formato'; fmtMap[f] = (fmtMap[f]||0)+1; });
+  const ctx2 = document.getElementById('chartFormat');
+  if (ctx2) {
+    STATE.charts.format = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(fmtMap),
+        datasets: [{
+          data: Object.values(fmtMap),
+          backgroundColor: ['#2dd4bf66','#818cf866'],
+          borderColor: ['#2dd4bf','#818cf8'],
+          borderWidth: 1.5, borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, ticks: { color: '#64748b', stepSize:1 }, grid: { color: '#1e2d4a' } },
+          y: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // Objective distribution
+  destroyChart('objetivo');
+  const objMap = {};
+  posts.forEach(p => { const o = p.objetivo || 'Sin clasificar'; objMap[o] = (objMap[o]||0)+1; });
+  const ctx3 = document.getElementById('chartObjetivo');
+  if (ctx3) {
+    STATE.charts.objetivo = new Chart(ctx3, {
+      type: 'polarArea',
+      data: {
+        labels: Object.keys(objMap),
+        datasets: [{
+          data: Object.values(objMap),
+          backgroundColor: ['#2dd4bf44','#818cf844','#f472b644','#fbbf2444','#34d39944'],
+          borderColor: ['#2dd4bf','#818cf8','#f472b6','#fbbf24','#34d399'],
+          borderWidth: 1.5
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 10, font: { size: 10 } } } }
+      }
+    });
+  }
+}
+
+function renderPostsTable() {
+  const posts = filterPosts();
+  document.getElementById('postCount').textContent = `${posts.length} posts`;
+  document.getElementById('postsTbody').innerHTML = posts.slice(0, 30).map(p => `
+    <tr>
+      <td title="${p.titulo||''}">${(p.titulo||'').slice(0,55)}${(p.titulo||'').length>55?'…':''}</td>
+      <td>${badge(p.plataforma)}</td>
+      <td>${p.pilar||'—'}</td>
+      <td>${p.formato||'—'}</td>
+      <td>${p.objetivo||'—'}</td>
+      <td style="white-space:nowrap">${p.fecha||'—'}</td>
+      <td style="white-space:nowrap;color:var(--text3);">${p.horario||'—'}</td>
+      <td>${p.likes != null ? p.likes : '<span class="metric-null">—</span>'}</td>
+      <td>${p.comentarios != null ? p.comentarios : '<span class="metric-null">—</span>'}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:32px;">No hay posts en este período</td></tr>';
+}
+
+function renderRecommendations() {
+  const data = STATE.data;
+  const pc = data?.pilarCounts || {};
+  const pkeys = Object.keys(pc);
+  const pvals = Object.values(pkeys.map(k => pc[k]));
+  const total = pvals.reduce((a,b)=>a+b,0);
+  
+  const recos = [];
+  
+  if (pkeys.length > 0) {
+    const min = Math.min(...pvals);
+    const minPilar = pkeys[pvals.indexOf(min)];
+    const pct = ((min/total)*100).toFixed(0);
+    recos.push({
+      title: '⚖️ Balance de Pilares',
+      body: `El pilar "${minPilar}" tiene solo ${min} posts (${pct}%). Recomiendo crear 1-2 posts de ${minPilar} esta semana para balancear.`
+    });
+  }
+  
+  const platCounts = data?.platformCounts || {};
+  if (platCounts.Instagram > platCounts.LinkedIn + 2) {
+    recos.push({
+      title: '📱 Saturación Instagram',
+      body: 'Hay más posts en Instagram que en LinkedIn. LinkedIn tiene mejor engagement B2B. Sugiero redistribuir 1 post semanal de IG a LinkedIn.'
+    });
+  }
+
+  recos.push({
+    title: '🦊 CTA de 1 Palabra',
+    body: 'Los posts con keyword (OPUS, AGENTE) en Drive GUIAS/ disparan el funnel automático Aria → DM. Asegura que 1 de cada 3 posts tenga CTA de 1 palabra.'
+  });
+
+  recos.push({
+    title: '🌐 Tráfico Web',
+    body: 'Recuerda la regla 3b: al menos 1 de cada 5 posts debe tener CTA directo a rfconsultoriaintegral.com.mx con oferta de diagnóstico gratuito.'
+  });
+
+  recos.push({
+    title: '🔗 Automatización + Capacitación',
+    body: 'Cada post de automatización debe mencionar la importancia de capacitar al equipo. Son las dos caras de la misma moneda.'
+  });
+
+  recos.push({
+    title: '📊 Carruseles Tutoriales',
+    body: 'El formato Tutorial Visual (regla 9d) está funcionando bien en Instagram. Mantén al menos 1 carrusel tutorial por semana con pilar IA o Automatización.'
+  });
+
+  document.getElementById('recoGrid').innerHTML = recos.map(r => `
+    <div class="reco-item">
+      <div class="reco-title">${r.title}</div>
+      <div class="reco-body">${r.body}</div>
+    </div>
+  `).join('');
+}
+
+// Init
+loadData();
+</script>
+</body>
+</html>
