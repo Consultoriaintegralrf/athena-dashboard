@@ -209,6 +209,19 @@
           </div>
         </div>
       </div>
+      <div class="charts-row">
+        <div class="chart-panel">
+          <h3>🧬 Estrategias Aplicadas por Athena</h3>
+          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+            <canvas id="chartStrategies" style="max-width:220px;max-height:220px;"></canvas>
+            <div id="strategyDetails" style="flex:1;min-width:250px;font-size:12px;"></div>
+          </div>
+        </div>
+        <div class="chart-panel">
+          <h3>📈 Evolución Semanal de Estrategias</h3>
+          <canvas id="chartStrategyEvo"></canvas>
+        </div>
+      </div>
     </div>
 
     <!-- View: Posts -->
@@ -225,8 +238,8 @@
                 <th>Post</th>
                 <th>Plataforma</th>
                 <th>Pilar</th>
+                <th>Estrategias</th>
                 <th>Formato</th>
-                <th>Objetivo</th>
                 <th>Fecha</th>
                 <th>Horario</th>
                 <th>Likes</th>
@@ -484,6 +497,90 @@ function renderStrategy() {
     });
   }
   
+  // Strategy Usage Charts
+  const strategyNames = {
+    '9a': 'Viaje del Héroe', '9b': 'Contraste de Precios', '9c': 'CTA 1-Palabra',
+    '9d': 'Tutorial Visual', '9e': 'Multiagente', '9f': 'CTAs Densos'
+  };
+  const strategyIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
+  const sc = data.strategyCounts || {};
+  
+  // Donut chart
+  destroyChart('strategies');
+  const ctxS = document.getElementById('chartStrategies');
+  if (ctxS) {
+    const sKeys = Object.keys(sc);
+    const sVals = Object.values(sc);
+    STATE.charts.strategies = new Chart(ctxS, {
+      type: 'doughnut',
+      data: {
+        labels: sKeys.map(k => strategyNames[k] || k),
+        datasets: [{
+          data: sVals,
+          backgroundColor: ['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'],
+          borderColor: '#111827', borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+  
+  // Details
+  const totalStrat = Object.values(sc).reduce((a,b)=>a+b,0) || 1;
+  let stratHtml = '';
+  Object.entries(strategyNames).forEach(([k, name]) => {
+    const count = sc[k] || 0;
+    const pct = ((count/totalStrat)*100).toFixed(0);
+    const color = count > 0 ? '#2dd4bf' : '#374151';
+    stratHtml += `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span>${strategyIcons[k]}</span>
+        <span style="color:${color};font-weight:600;width:130px;">${name}</span>
+        <span style="color:var(--text2);width:35px;">${count}</span>
+        <span style="color:var(--text3);font-size:11px;">${pct}%</span>
+      </div>`;
+  });
+  
+  // Missing strategies
+  const missing = Object.entries(strategyNames).filter(([k]) => !sc[k]);
+  if (missing.length > 0) {
+    stratHtml += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+      <span style="color:var(--amber);font-size:11px;">⚠️ Estrategias sin aplicar:</span>
+      <span style="color:var(--text3);font-size:11px;">${missing.map(([k,n])=>strategyIcons[k]+' '+n).join(' · ')}</span>
+    </div>`;
+  }
+  document.getElementById('strategyDetails').innerHTML = stratHtml;
+
+  // Weekly Evolution
+  destroyChart('strategyEvo');
+  const sw = data.strategyByWeek || {};
+  const weeksSorted = Object.keys(sw).sort().slice(-6);
+  const ctxE = document.getElementById('chartStrategyEvo');
+  if (ctxE && weeksSorted.length > 0) {
+    const datasets = Object.entries(strategyNames).map(([k, name], i) => ({
+      label: name,
+      data: weeksSorted.map(w => sw[w]?.[k] || 0),
+      borderColor: ['#2dd4bf','#818cf8','#f59e0b','#f472b6','#34d399','#fbbf24'][i],
+      backgroundColor: 'transparent',
+      tension: 0.3, borderWidth: 2, pointRadius: 3
+    }));
+    STATE.charts.strategyEvo = new Chart(ctxE, {
+      type: 'line',
+      data: { labels: weeksSorted, datasets },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#94a3b8', padding: 8, font: { size: 10 }, boxWidth: 12 } } },
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#64748b', stepSize: 1 }, grid: { color: '#1e2d4a' } },
+          x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+        }
+      }
+    });
+  }
+
   document.getElementById('nextWeekHeader').innerHTML = days.map(d => 
     `<th style="text-align:center;">${d.label}</th>`
   ).join('');
@@ -508,17 +605,18 @@ function renderPostsTable() {
   const posts = filterPosts();
   document.getElementById('postCount').textContent = `${posts.length} posts`;
   document.getElementById('postsTbody').innerHTML = posts.slice(0, 30).map(p => `
-    <tr>
-      <td title="${p.titulo||''}">${(p.titulo||'').slice(0,55)}${(p.titulo||'').length>55?'…':''}</td>
-      <td>${badge(p.plataforma)}</td>
-      <td>${p.pilar||'—'}</td>
-      <td>${p.formato||'—'}</td>
-      <td>${p.objetivo||'—'}</td>
-      <td style="white-space:nowrap">${p.fecha||'—'}</td>
-      <td style="white-space:nowrap;color:var(--text3);">${p.horario||'—'}</td>
-      <td>${p.likes != null ? p.likes : '<span class="metric-null">—</span>'}</td>
-      <td>${p.comentarios != null ? p.comentarios : '<span class="metric-null">—</span>'}</td>
-    </tr>
+    const stratIcons = { '9a':'📖', '9b':'💰', '9c':'🎯', '9d':'🎬', '9e':'🤖', '9f':'📊' };
+    return \`    <tr>
+      <td title="\${p.titulo||''}">\${(p.titulo||'').slice(0,50)}\${(p.titulo||'').length>50?'…':''}</td>
+      <td>\${badge(p.plataforma)}</td>
+      <td>\${p.pilar||'—'}</td>
+      <td>\${(p.estrategias||[]).map(s=>stratIcons[s]||'').join('') || '<span class="metric-null">—</span>'}</td>
+      <td>\${p.formato||'—'}</td>
+      <td style="white-space:nowrap">\${p.fecha||'—'}</td>
+      <td style="white-space:nowrap;color:var(--text3);">\${p.horario||'—'}</td>
+      <td>\${p.likes != null ? p.likes : '<span class="metric-null">—</span>'}</td>
+      <td>\${p.comentarios != null ? p.comentarios : '<span class="metric-null">—</span>'}</td>
+    </tr>\`;
   `).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:32px;">No hay posts en este período</td></tr>';
 }
 
