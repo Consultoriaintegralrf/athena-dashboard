@@ -1,73 +1,69 @@
-// api/metrics.js — Vercel serverless: retorna métricas desde Baserow + n8n Data Table
+// api/metrics.js — Vercel serverless: retorna métricas desde Baserow
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
   const BASEROW_URL = process.env.BASEROW_URL || 'https://api.baserow.io';
   const BASEROW_TOKEN = process.env.BASEROW_TOKEN || '';
-  const N8N_URL = process.env.N8N_URL || '';
-  const N8N_TOKEN = process.env.N8N_TOKEN || '';
 
-  const days = parseInt(req.query.days || '14');
+  const days = parseInt(req.query.days || '30');
 
   try {
-    // 1. Fetch posts from Baserow Contenido table (891)
+    // Fetch ALL posts from Baserow Contenido table (891) — sin filtrar por estado
     const postsRes = await fetch(
-      `${BASEROW_URL}/api/database/rows/table/891/?user_field_names=true&size=50`,
+      `${BASEROW_URL}/api/database/rows/table/891/?user_field_names=true&size=200`,
       { headers: { Authorization: `Token ${BASEROW_TOKEN}` } }
     );
-    const postsData = await postsRes.json();
-    const posts = (postsData.results || []).filter(p => p.Estado === 'Listo' || p.Estado === 'Programado');
-
-    // 2. Fetch analytics from n8n Data Table
-    let analytics = [];
-    if (N8N_URL && N8N_TOKEN) {
-      try {
-        const analyticsRes = await fetch(
-          `${N8N_URL}/api/v1/data-tables/XS1zmOHJecBz0N5e/rows?limit=100`,
-          { headers: { 'X-N8N-API-KEY': N8N_TOKEN } }
-        );
-        const aData = await analyticsRes.json();
-        analytics = aData.data || aData.rows || aData || [];
-      } catch (e) {
-        // n8n data table might not be accessible
-      }
-    }
-
-    // 3. Build metrics summary
-    const platformCounts = { Instagram: 0, Facebook: 0, LinkedIn: 0 };
-    const pilarCounts = {};
-    const pilarEngagement = {};
     
-    posts.forEach(p => {
+    if (!postsRes.ok) throw new Error(`Baserow API error: ${postsRes.status}`);
+    
+    const postsData = await postsRes.json();
+    let posts = postsData.results || [];
+
+    // Filter by date range
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    
+    const filteredPosts = posts.filter(p => {
+      if (!p.Fecha_publicacion) return false;
+      const postDate = new Date(p.Fecha_publicacion + 'T12:00:00');
+      return postDate >= cutoff;
+    });
+
+    // Build metrics summary
+    const platformCounts = {};
+    const pilarCounts = {};
+    
+    filteredPosts.forEach(p => {
       const plat = p.Plataforma || 'Instagram';
       platformCounts[plat] = (platformCounts[plat] || 0) + 1;
       const pilar = p.Pilar || 'Sin clasificar';
       pilarCounts[pilar] = (pilarCounts[pilar] || 0) + 1;
     });
 
-    // Match analytics with posts
-    const recentPosts = posts.slice(0, 20).map(p => {
-      const match = analytics.find(a => {
-        const aTitle = typeof a === 'object' ? (a.post_titulo || a.data?.post_titulo || '') : '';
-        return aTitle === p.Titulo;
-      });
-      return {
-        titulo: (p.Titulo || '').slice(0, 80),
-        plataforma: p.Plataforma || 'Instagram',
-        pilar: p.Pilar || '',
-        formato: p.Formato || '',
-        fecha: p.Fecha_publicacion || '',
-        objetivo: p.Objetivo || '',
-        likes: match ? (match.likes || match.data?.likes || 0) : null,
-        comentarios: match ? (match.comentarios || match.data?.comentarios || 0) : null,
-        shares: match ? (match.shares || match.data?.shares || 0) : null,
-        alcance: match ? (match.alcance || match.data?.alcance || 0) : null,
-      };
-    });
+    // Map posts to response format with all fields
+    const recentPosts = filteredPosts.map(p => ({
+      titulo: p.Titulo || '',
+      plataforma: p.Plataforma || 'Instagram',
+      pilar: p.Pilar || '',
+      formato: p.Formato || '',
+      fecha: p.Fecha_publicacion || '',
+      horario: p.Horario_recomendado || '',
+      objetivo: p.Objetivo || '',
+      estado: p.Estado || '',
+      cta: p.CTA || '',
+      // Métricas pendientes de scrapear por Athena
+      likes: null,
+      comentarios: null,
+      shares: null,
+      alcance: null,
+    }));
+
+    // Sort by date descending
+    recentPosts.sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
 
     res.status(200).json({
-      total: posts.length,
+      total: filteredPosts.length,
       platformCounts,
       pilarCounts,
       recentPosts,
